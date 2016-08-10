@@ -71,66 +71,41 @@ var Perf = $hx_exports.Perf = function(pos,offset) {
 	if(offset == null) offset = 0;
 	if(pos == null) pos = "TR";
 	this._perfObj = window.performance;
-	if(Reflect.field(this._perfObj,"memory") != null) this._memoryObj = Reflect.field(this._perfObj,"memory");
+	this._memoryObj = window.performance.memory;
 	this._memCheck = this._perfObj != null && this._memoryObj != null && this._memoryObj.totalJSHeapSize > 0;
-	this._pos = pos;
-	this._offset = offset;
-	this.currentFps = 60;
+	this._raf = true;
+	this.currentFps = 0;
 	this.currentMs = 0;
 	this.currentMem = "0";
-	this.lowFps = 60;
-	this.avgFps = 60;
-	this._measureCount = 0;
-	this._totalFps = 0;
+	this._pos = pos;
+	this._offset = offset;
 	this._time = 0;
 	this._ticks = 0;
-	this._fpsMin = 60;
-	this._fpsMax = 60;
+	this._fpsMin = Infinity;
+	this._fpsMax = 0;
 	if(this._perfObj != null && ($_=this._perfObj,$bind($_,$_.now)) != null) this._startTime = this._perfObj.now(); else this._startTime = new Date().getTime();
 	this._prevTime = -Perf.MEASUREMENT_INTERVAL;
 	this._createFpsDom();
 	this._createMsDom();
 	if(this._memCheck) this._createMemoryDom();
-	if(($_=window,$bind($_,$_.requestAnimationFrame)) != null) this.RAF = ($_=window,$bind($_,$_.requestAnimationFrame)); else if(window.mozRequestAnimationFrame != null) this.RAF = window.mozRequestAnimationFrame; else if(window.webkitRequestAnimationFrame != null) this.RAF = window.webkitRequestAnimationFrame; else if(window.msRequestAnimationFrame != null) this.RAF = window.msRequestAnimationFrame;
-	if(($_=window,$bind($_,$_.cancelAnimationFrame)) != null) this.CAF = ($_=window,$bind($_,$_.cancelAnimationFrame)); else if(window.mozCancelAnimationFrame != null) this.CAF = window.mozCancelAnimationFrame; else if(window.webkitCancelAnimationFrame != null) this.CAF = window.webkitCancelAnimationFrame; else if(window.msCancelAnimationFrame != null) this.CAF = window.msCancelAnimationFrame;
-	if(this.RAF != null) this._raf = Reflect.callMethod(window,this.RAF,[$bind(this,this._tick)]);
+	window.requestAnimationFrame($bind(this,this._tick));
 };
 $hxClasses["Perf"] = Perf;
 Perf.__name__ = ["Perf"];
 Perf.prototype = {
-	_init: function() {
-		this.currentFps = 60;
-		this.currentMs = 0;
-		this.currentMem = "0";
-		this.lowFps = 60;
-		this.avgFps = 60;
-		this._measureCount = 0;
-		this._totalFps = 0;
-		this._time = 0;
-		this._ticks = 0;
-		this._fpsMin = 60;
-		this._fpsMax = 60;
-		if(this._perfObj != null && ($_=this._perfObj,$bind($_,$_.now)) != null) this._startTime = this._perfObj.now(); else this._startTime = new Date().getTime();
-		this._prevTime = -Perf.MEASUREMENT_INTERVAL;
-	}
-	,_now: function() {
+	_now: function() {
 		if(this._perfObj != null && ($_=this._perfObj,$bind($_,$_.now)) != null) return this._perfObj.now(); else return new Date().getTime();
 	}
-	,_tick: function(val) {
+	,_tick: function() {
 		var time;
 		if(this._perfObj != null && ($_=this._perfObj,$bind($_,$_.now)) != null) time = this._perfObj.now(); else time = new Date().getTime();
 		this._ticks++;
-		if(this._raf != null && time > this._prevTime + Perf.MEASUREMENT_INTERVAL) {
+		if(this._raf && time > this._prevTime + Perf.MEASUREMENT_INTERVAL) {
 			this.currentMs = Math.round(time - this._startTime);
 			this.ms.innerHTML = "MS: " + this.currentMs;
 			this.currentFps = Math.round(this._ticks * 1000 / (time - this._prevTime));
-			if(this.currentFps > 0 && val > Perf.DELAY_TIME) {
-				this._measureCount++;
-				this._totalFps += this.currentFps;
-				this.lowFps = this._fpsMin = Math.min(this._fpsMin,this.currentFps);
-				this._fpsMax = Math.max(this._fpsMax,this.currentFps);
-				this.avgFps = Math.round(this._totalFps / this._measureCount);
-			}
+			this._fpsMin = Math.min(this._fpsMin,this.currentFps);
+			this._fpsMax = Math.max(this._fpsMax,this.currentFps);
 			this.fps.innerHTML = "FPS: " + this.currentFps + " (" + this._fpsMin + "-" + this._fpsMax + ")";
 			if(this.currentFps >= 30) this.fps.style.backgroundColor = Perf.FPS_BG_CLR; else if(this.currentFps >= 15) this.fps.style.backgroundColor = Perf.FPS_WARN_BG_CLR; else this.fps.style.backgroundColor = Perf.FPS_PROB_BG_CLR;
 			this._prevTime = time;
@@ -141,7 +116,8 @@ Perf.prototype = {
 			}
 		}
 		this._startTime = time;
-		if(this._raf != null) this._raf = Reflect.callMethod(window,this.RAF,[$bind(this,this._tick)]);
+		if(this._raf) window.requestAnimationFrame(this._raf?$bind(this,this._tick):function() {
+		});
 	}
 	,_createDiv: function(id,top) {
 		if(top == null) top = 0;
@@ -224,8 +200,7 @@ Perf.prototype = {
 		}
 	}
 	,destroy: function() {
-		Reflect.callMethod(window,this.CAF,[this._raf]);
-		this._raf = null;
+		this._raf = false;
 		this._perfObj = null;
 		this._memoryObj = null;
 		if(this.fps != null) {
@@ -241,23 +216,6 @@ Perf.prototype = {
 			this.memory = null;
 		}
 		this.clearInfo();
-		this.currentFps = 60;
-		this.currentMs = 0;
-		this.currentMem = "0";
-		this.lowFps = 60;
-		this.avgFps = 60;
-		this._measureCount = 0;
-		this._totalFps = 0;
-		this._time = 0;
-		this._ticks = 0;
-		this._fpsMin = 60;
-		this._fpsMax = 60;
-		if(this._perfObj != null && ($_=this._perfObj,$bind($_,$_.now)) != null) this._startTime = this._perfObj.now(); else this._startTime = new Date().getTime();
-		this._prevTime = -Perf.MEASUREMENT_INTERVAL;
-	}
-	,_cancelRAF: function() {
-		Reflect.callMethod(window,this.CAF,[this._raf]);
-		this._raf = null;
 	}
 	,__class__: Perf
 };
@@ -274,9 +232,6 @@ Reflect.field = function(o,field) {
 };
 Reflect.setField = function(o,field,value) {
 	o[field] = value;
-};
-Reflect.callMethod = function(o,func,args) {
-	return func.apply(o,args);
 };
 Reflect.fields = function(o) {
 	var a = [];
@@ -529,6 +484,7 @@ com_ragestudio_game_GameManager.prototype = {
 	start: function() {
 		com_ragestudio_ui_UIManager.getInstance().startGame();
 		com_ragestudio_utils_game_GameStage.getInstance().getGameContainer().addChild(com_ragestudio_game_sprites_entities_Player.createPlayer());
+		new com_ragestudio_game_sprites_GridManager();
 		var _g = 0;
 		var _g1 = com_ragestudio_game_sprites_entities_Player.getPlayers();
 		while(_g < _g1.length) {
@@ -1004,6 +960,38 @@ com_ragestudio_game_PoolManager.clearAll = function() {
 com_ragestudio_game_PoolManager.prototype = {
 	__class__: com_ragestudio_game_PoolManager
 };
+var com_ragestudio_game_sprites_GridManager = function(texture) {
+	PIXI.Sprite.call(this,texture);
+	this.gridGeneration();
+};
+$hxClasses["com.ragestudio.game.sprites.GridManager"] = com_ragestudio_game_sprites_GridManager;
+com_ragestudio_game_sprites_GridManager.__name__ = ["com","ragestudio","game","sprites","GridManager"];
+com_ragestudio_game_sprites_GridManager.__super__ = PIXI.Sprite;
+com_ragestudio_game_sprites_GridManager.prototype = $extend(PIXI.Sprite.prototype,{
+	gridGeneration: function() {
+		var dX = -650;
+		var dY = 0;
+		var _g = 0;
+		while(_g < 50) {
+			var i = _g++;
+			var _g1 = 0;
+			while(_g1 < 75) {
+				var e = _g1++;
+				var graphics = new PIXI.Graphics();
+				graphics.beginFill(16776960,0.2);
+				graphics.lineStyle(1,0);
+				graphics.drawRect(0,0,50,50);
+				graphics.x = dX;
+				graphics.y = dY;
+				dX += graphics.width;
+				com_ragestudio_utils_game_GameStage.getInstance().getGameContainer().addChild(graphics);
+			}
+			dY += 51;
+			dX = -650;
+		}
+	}
+	,__class__: com_ragestudio_game_sprites_GridManager
+});
 var com_ragestudio_game_sprites_planes_GamePlane = function() {
 	this.collectableContainer = new PIXI.Container();
 	this.enemiesContainer = new PIXI.Container();
@@ -2639,7 +2627,6 @@ Perf.TOP_LEFT = "TL";
 Perf.TOP_RIGHT = "TR";
 Perf.BOTTOM_LEFT = "BL";
 Perf.BOTTOM_RIGHT = "BR";
-Perf.DELAY_TIME = 4000;
 Xml.Element = 0;
 Xml.PCData = 1;
 Xml.CData = 2;
@@ -2748,5 +2735,3 @@ haxe_xml_Parser.escapes = (function($this) {
 js_Boot.__toStr = {}.toString;
 com_ragestudio_Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}}, typeof window != "undefined" ? window : exports, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);
-
-//# sourceMappingURL=NextDays.js.map

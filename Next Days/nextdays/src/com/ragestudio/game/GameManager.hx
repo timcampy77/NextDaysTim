@@ -1,12 +1,16 @@
 package com.ragestudio.game;
 
 import com.ragestudio.game.sprites.entities.Player;
+import com.ragestudio.game.sprites.GridManager;
 import com.ragestudio.ui.CheatPanel;
 import com.ragestudio.ui.UIManager;
 import com.ragestudio.utils.events.EventType;
 import com.ragestudio.utils.game.CollisionManager;
 import com.ragestudio.utils.game.GameStage;
 import com.ragestudio.utils.system.DeviceCapabilities;
+import pixi.core.graphics.Graphics;
+import pixi.core.Pixi;
+import pixi.core.sprites.Sprite;
 import pixi.interaction.EventTarget;
 import pixi.interaction.InteractionManager;
 
@@ -43,11 +47,13 @@ class GameManager
 		// début de l'initialisation du jeu
 		
 		GameStage.getInstance().getGameContainer().addChild(Player.createPlayer());
+		new GridManager();
 		for (lPlayer in Player.getPlayers()) {
 			lPlayer.x = 500;
 			lPlayer.y = 500;
 			lPlayer.start();
 		}
+		
 		CheatPanel.getInstance().ingame();	
 		
 		// enregistre le GameManager en tant qu'écouteur de la gameloop principale
