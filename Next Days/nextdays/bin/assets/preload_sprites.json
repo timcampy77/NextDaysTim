@@ -1,0 +1,56 @@
+﻿{"frames": {
+
+"alpha_bg.png":
+{
+	"frame": {"x":1263,"y":1,"w":51,"h":50},
+	"pivot": {"x":0,"y":0},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":51,"h":50},
+	"sourceSize": {"w":51,"h":50}
+},
+"black_bg0001.png":
+{
+	"frame": {"x":1314,"y":1,"w":50,"h":50},
+	"pivot": {"x":0,"y":0},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":50,"h":50},
+	"sourceSize": {"w":50,"h":50}
+},
+"black_bg0002.png":
+{
+	"frame": {"x":1314,"y":1,"w":50,"h":50},
+	"pivot": {"x":0,"y":0},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":50,"h":50},
+	"sourceSize": {"w":50,"h":50}
+},
+"preload.png":
+{
+	"frame": {"x":1,"y":303,"w":981,"h":59},
+	"pivot": {"x":0,"y":0.51},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":981,"h":59},
+	"sourceSize": {"w":981,"h":59}
+},
+"preload_bg.png":
+{
+	"frame": {"x":1,"y":1,"w":1262,"h":302},
+	"pivot": {"x":0.5,"y":0.52},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1262,"h":302},
+	"sourceSize": {"w":1262,"h":302}
+}},
+"meta": {
+	"app": "Adobe Flash Professional",
+	"version": "14.0.0.110",
+	"image": "preload_sprites.png",
+	"format": "RGBA8888",
+	"size": {"w":2048,"h":499},
+	"scale": "1"
+}
+}

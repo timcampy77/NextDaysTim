@@ -1,6 +1,8 @@
 package com.ragestudio;
 
-import com.ragestudio.ui.GraphicLoader;
+import com.ragestudio.ui.screens.GraphicLoader;
+import com.ragestudio.ui.LoaderManager;
+import com.ragestudio.ui.screens.SpriteAmplified;
 import com.ragestudio.ui.screens.TitleCard;
 import com.ragestudio.ui.UIManager;
 import com.ragestudio.utils.Config;
@@ -11,15 +13,16 @@ import com.ragestudio.utils.game.GameStage;
 import com.ragestudio.utils.game.GameStageScale;
 import com.ragestudio.utils.game.StateGraphic;
 import com.ragestudio.utils.loader.GameLoader;
+import com.ragestudio.utils.sounds.SoundManager;
 import com.ragestudio.utils.system.DeviceCapabilities;
 import eventemitter3.EventEmitter;
+import haxe.Timer;
 import js.Browser;
 import pixi.core.display.Container;
 import pixi.core.renderers.Detector;
 import pixi.core.renderers.webgl.WebGLRenderer;
 import pixi.interaction.EventTarget;
 import pixi.loaders.Loader;
-
 /**
  * Classe d'initialisation et lancement du jeu
  * @author Mathieu ANTHOINE
@@ -48,6 +51,14 @@ class Main extends EventEmitter
 	 */
 	public var stage:Container;
 	
+	public var frames (default, null):Int = 0;
+	public static inline var FPS:Int = 16;//Math.floor(1000 / 60);
+	private var blackBarLeft:SpriteAmplified = new SpriteAmplified("black_bg");
+	private var blackBarRight:SpriteAmplified = new SpriteAmplified("black_bg");
+	private var blackBarTop:SpriteAmplified = new SpriteAmplified("black_bg");
+	private var blackBarBot:SpriteAmplified = new SpriteAmplified("black_bg");
+
+	
 	/**
 	 * initialisation générale
 	 */
@@ -74,27 +85,30 @@ class Main extends EventEmitter
 		var lOptions:RenderingOptions = {};
 		//lOptions.antialias = true;
 		//lOptions.autoResize = true;
-		lOptions.backgroundColor = 0x999999;
+		lOptions.backgroundColor = 0x9DC07A;
 		//lOptions.resolution = 1;
 		//lOptions.transparent = false;
 		//lOptions.preserveDrawingBuffer (pour dataToURL)
 		
-		renderer = Detector.autoDetectRenderer(DeviceCapabilities.width, DeviceCapabilities.height,lOptions);
 		
-		//renderer.roundPixels= true;
+		DeviceCapabilities.scaleViewport();
+		renderer = Detector.autoDetectRenderer(DeviceCapabilities.width, DeviceCapabilities.height,lOptions);
+		renderer.roundPixels = true;
 		
 		Browser.document.body.appendChild(renderer.view);
-
+		
 		stage = new Container();
 		
 		var lConfig:Loader = new Loader();
 		configPath += "?" + Date.now().getTime();
 		lConfig.add(configPath);
+		
 		lConfig.once(LoadEventType.COMPLETE, preloadAssets);
 		
 		lConfig.load();
 
 	}
+
 	
 	/**
 	 * charge les assets graphiques du preloader principal
@@ -103,7 +117,6 @@ class Main extends EventEmitter
 		
 		// initialise les paramètres de configuration
 		Config.init(Reflect.field(pLoader.resources,configPath).data);
-		
 		// Active le mode debug
 		if (Config.debug) Debug.getInstance().init();
 		// défini l'alpha des Boxes de collision
@@ -111,10 +124,14 @@ class Main extends EventEmitter
 		// défini l'alpha des anims
 		if (Config.debug && Config.data.animAlpha != null) StateGraphic.animAlpha = Config.data.animAlpha;
 		
+		
+		DeviceCapabilities.init();
+		
+		
 		// défini le mode de redimensionnement du Jeu
 		GameStage.getInstance().scaleMode = GameStageScale.SHOW_ALL;
 		// initialise le GameStage et défini la taille de la safeZone
-		GameStage.getInstance().init(render,2048, 1366,true);
+		GameStage.getInstance().init(render,2048, 1366);
 		
 		// affiche le bouton FullScreen quand c'est nécessaire
 		DeviceCapabilities.displayFullScreenButton();
@@ -126,78 +143,57 @@ class Main extends EventEmitter
 		Browser.window.addEventListener(EventType.RESIZE, resize);
 		resize();
 		
+		
+		
 		// lance le chargement des assets graphiques du preloader
-		var lLoader:GameLoader = new GameLoader();
-		lLoader.addAssetFile("black_bg.png");
-		lLoader.addAssetFile("preload.png");
-		lLoader.addAssetFile("preload_bg.png");
-		
-		lLoader.once(LoadEventType.COMPLETE, loadAssets);
-		lLoader.load();
-		
+		LoaderManager.getInstance().startLoadingProcess("preload", loadAssets);
 	}	
 	
 	/**
 	 * lance le chargement principal
 	 */
 	private function loadAssets (pLoader:GameLoader): Void {
+		LoaderManager.getInstance().startLoadingProcess("general", onLoadComplete);
 		
-		var lLoader:GameLoader = new GameLoader();
-				
-		lLoader.addTxtFile("boxes.json");
-		lLoader.addSoundFile("sounds.json");
-
-		lLoader.addAssetFile("alpha_bg.png");
-		lLoader.addAssetFile("TitleCard_bg.png");
-		lLoader.addAssetFile("Confirm.png");
-		lLoader.addAssetFile("Template.json");
-		lLoader.addFontFile("fonts.css");
-
-		lLoader.on(LoadEventType.PROGRESS, onLoadProgress);
-		lLoader.once(LoadEventType.COMPLETE, onLoadComplete);
-
 		// affiche l'écran de préchargement
 		UIManager.getInstance().openScreen(GraphicLoader.getInstance());
 		
-		Browser.window.requestAnimationFrame(gameLoop);
 		
-		lLoader.load();
+		//Browser.window.requestAnimationFrame(gameLoop);
+		gameLoop();
 		
 	}
 	
-	/**
-	 * transmet les paramètres de chargement au préchargeur graphique
-	 * @param	pEvent evenement de chargement
-	 */
-	private function onLoadProgress (pLoader:GameLoader): Void {
-		GraphicLoader.getInstance().update(pLoader.progress/100);
-	}
 	
 	/**
 	 * initialisation du jeu
 	 * @param	pEvent evenement de chargement
 	 */
-	private function onLoadComplete (pLoader:GameLoader): Void {
-		
-		pLoader.off(LoadEventType.PROGRESS, onLoadProgress);
-		
-		// transmet à StateGraphic la description des planches de Sprites utilisées par les anim MovieClip des instances de StateGraphic
-		StateGraphic.addTextures(GameLoader.getContent("Template.json"));
-				
-		// transmet au StateGraphic la description des boxes de collision utilisées par les instances de StateGraphic
-		StateGraphic.addBoxes(GameLoader.getContent("boxes.json"));
+	private function onLoadComplete (): Void {
 		
 		// Ouvre la TitleClard
+		//SoundManager.getSound("uiloop").play();
 		UIManager.getInstance().openScreen(TitleCard.getInstance());
+		
+		/*blackBarLeft.start();
+		blackBarRight.start();
+		blackBarTop.start();
+		blackBarBot.start();
+		blackBarLeft.scale.set(GameStage.getInstance().safeZone.width / blackBarLeft.width, GameStage.getInstance().safeZone.height * 2 / blackBarLeft.width);
+		blackBarRight.scale.set(GameStage.getInstance().safeZone.width / blackBarRight.width, GameStage.getInstance().safeZone.height * 2 / blackBarRight.width);
+		trace(blackBarLeft.width, blackBarLeft.height, blackBarLeft.x);
+		blackBarTop.scale.set(GameStage.getInstance().safeZone.width * 2 / blackBarLeft.width, GameStage.getInstance().safeZone.height/ blackBarLeft.width);
+		blackBarBot.scale = blackBarTop.scale;*/
 	}
 	
+
 	/**
 	 * game loop
 	 */
-	private function gameLoop(pID:Float):Void {
-		Browser.window.requestAnimationFrame(gameLoop);
-		
-		render();		
+	private function gameLoop():Void {
+		Timer.delay(gameLoop, FPS);
+		//Browser.window.requestAnimationFrame(gameLoop);
+		render();
 		emit(EventType.GAME_LOOP);
 		
 	}
@@ -211,11 +207,15 @@ class Main extends EventEmitter
 		GameStage.getInstance().resize();
 	}
 	
+	
+	
 	/**
 	 * fait le rendu de l'écran
 	 */
 	private function render (): Void {
-		renderer.render(stage);
+		
+		if (frames++ % 2 == 0) renderer.render(stage);
+		else GameStage.getInstance().updateTransform();
 	}
 		
 	/**

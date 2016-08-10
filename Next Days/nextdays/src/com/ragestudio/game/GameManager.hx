@@ -1,7 +1,6 @@
 package com.ragestudio.game;
 
-
-import com.ragestudio.game.sprites.Template;
+import com.ragestudio.game.sprites.entities.Player;
 import com.ragestudio.ui.CheatPanel;
 import com.ragestudio.ui.UIManager;
 import com.ragestudio.utils.events.EventType;
@@ -42,8 +41,13 @@ class GameManager
 		UIManager.getInstance().startGame();	
 		
 		// début de l'initialisation du jeu
-		GameStage.getInstance().getGameContainer().addChild(Template.getInstance());
-		Template.getInstance().start();	
+		
+		GameStage.getInstance().getGameContainer().addChild(Player.createPlayer());
+		for (lPlayer in Player.getPlayers()) {
+			lPlayer.x = 500;
+			lPlayer.y = 500;
+			lPlayer.start();
+		}
 		CheatPanel.getInstance().ingame();	
 		
 		// enregistre le GameManager en tant qu'écouteur de la gameloop principale

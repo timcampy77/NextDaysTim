@@ -22,7 +22,7 @@ class Hud extends Screen
 	 */
 	private static var instance: Hud;
 	
-	private var hudTopLeft:Sprite;
+	private var hudTopLeft:Container;
 	private var hudBottomLeft:Container;
 
 	/**
@@ -38,19 +38,10 @@ class Hud extends Screen
 	{
 		super();
 		_modal = false;
-		hudTopLeft = new Sprite(Texture.fromImage(Config.url(Config.assetsPath + "HudLeft.png")));
+		hudTopLeft = new Container();
 		
 		hudBottomLeft = new Container();
 			
-		// affichage de textes utilisant des polices de caractères chargées
-		var lTxt:Text = new Text((DeviceCapabilities.system==DeviceCapabilities.SYSTEM_DESKTOP ? "Click" : "Tap" )+ " to move", { font: "80px MyFont", fill: "#FFFFFF", align: "left" } );
-		lTxt.position.set(20, -220);
-		hudBottomLeft.addChild(lTxt);
-		
-		var lTxt2:Text = new Text("or use cheat panel", { font: "100px MyOtherFont", fill: "#000000", align: "left" } );
-		lTxt2.position.set(20, -120);
-		hudBottomLeft.addChild(lTxt2);		
-		
 		addChild(hudTopLeft);
 		addChild(hudBottomLeft);
 		

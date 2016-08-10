@@ -1,8 +1,7 @@
 package com.ragestudio.game.sprites;
 
-import com.isartdigital.platformer.game.PoolManager;
-import com.isartdigital.platformer.game.sprites.planes.GamePlane;
-import com.isartdigital.utils.game.StateGraphic;
+import com.ragestudio.game.PoolManager;
+import com.ragestudio.utils.game.StateGraphic;
 import pixi.core.math.Point;
 
 /**

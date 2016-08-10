@@ -1,5 +1,5 @@
 (function (console, $hx_exports, $global) { "use strict";
-var $estr = function() { return js_Boot.__string_rec(this,''); };
+var $hxClasses = {},$estr = function() { return js_Boot.__string_rec(this,''); };
 function $extend(from, fields) {
 	function Inherit() {} Inherit.prototype = from; var proto = new Inherit();
 	for (var name in fields) proto[name] = fields[name];
@@ -10,6 +10,7 @@ var EReg = function(r,opt) {
 	opt = opt.split("u").join("");
 	this.r = new RegExp(r,opt);
 };
+$hxClasses["EReg"] = EReg;
 EReg.__name__ = ["EReg"];
 EReg.prototype = {
 	match: function(s) {
@@ -24,6 +25,7 @@ EReg.prototype = {
 	,__class__: EReg
 };
 var HxOverrides = function() { };
+$hxClasses["HxOverrides"] = HxOverrides;
 HxOverrides.__name__ = ["HxOverrides"];
 HxOverrides.cca = function(s,index) {
 	var x = s.charCodeAt(index);
@@ -93,6 +95,7 @@ var Perf = $hx_exports.Perf = function(pos,offset) {
 	if(($_=window,$bind($_,$_.cancelAnimationFrame)) != null) this.CAF = ($_=window,$bind($_,$_.cancelAnimationFrame)); else if(window.mozCancelAnimationFrame != null) this.CAF = window.mozCancelAnimationFrame; else if(window.webkitCancelAnimationFrame != null) this.CAF = window.webkitCancelAnimationFrame; else if(window.msCancelAnimationFrame != null) this.CAF = window.msCancelAnimationFrame;
 	if(this.RAF != null) this._raf = Reflect.callMethod(window,this.RAF,[$bind(this,this._tick)]);
 };
+$hxClasses["Perf"] = Perf;
 Perf.__name__ = ["Perf"];
 Perf.prototype = {
 	_init: function() {
@@ -259,6 +262,7 @@ Perf.prototype = {
 	,__class__: Perf
 };
 var Reflect = function() { };
+$hxClasses["Reflect"] = Reflect;
 Reflect.__name__ = ["Reflect"];
 Reflect.field = function(o,field) {
 	try {
@@ -285,6 +289,7 @@ Reflect.fields = function(o) {
 	return a;
 };
 var Std = function() { };
+$hxClasses["Std"] = Std;
 Std.__name__ = ["Std"];
 Std["is"] = function(v,t) {
 	return js_Boot.__instanceof(v,t);
@@ -304,6 +309,7 @@ Std.parseInt = function(x) {
 var StringBuf = function() {
 	this.b = "";
 };
+$hxClasses["StringBuf"] = StringBuf;
 StringBuf.__name__ = ["StringBuf"];
 StringBuf.prototype = {
 	add: function(x) {
@@ -315,18 +321,52 @@ StringBuf.prototype = {
 	,__class__: StringBuf
 };
 var StringTools = function() { };
+$hxClasses["StringTools"] = StringTools;
 StringTools.__name__ = ["StringTools"];
 StringTools.fastCodeAt = function(s,index) {
 	return s.charCodeAt(index);
 };
 var Type = function() { };
+$hxClasses["Type"] = Type;
 Type.__name__ = ["Type"];
 Type.getClassName = function(c) {
 	var a = c.__name__;
 	if(a == null) return null;
 	return a.join(".");
 };
+Type.resolveClass = function(name) {
+	var cl = $hxClasses[name];
+	if(cl == null || !cl.__name__) return null;
+	return cl;
+};
+Type.createInstance = function(cl,args) {
+	var _g = args.length;
+	switch(_g) {
+	case 0:
+		return new cl();
+	case 1:
+		return new cl(args[0]);
+	case 2:
+		return new cl(args[0],args[1]);
+	case 3:
+		return new cl(args[0],args[1],args[2]);
+	case 4:
+		return new cl(args[0],args[1],args[2],args[3]);
+	case 5:
+		return new cl(args[0],args[1],args[2],args[3],args[4]);
+	case 6:
+		return new cl(args[0],args[1],args[2],args[3],args[4],args[5]);
+	case 7:
+		return new cl(args[0],args[1],args[2],args[3],args[4],args[5],args[6]);
+	case 8:
+		return new cl(args[0],args[1],args[2],args[3],args[4],args[5],args[6],args[7]);
+	default:
+		throw new js__$Boot_HaxeError("Too many arguments");
+	}
+	return null;
+};
 var _$UInt_UInt_$Impl_$ = {};
+$hxClasses["_UInt.UInt_Impl_"] = _$UInt_UInt_$Impl_$;
 _$UInt_UInt_$Impl_$.__name__ = ["_UInt","UInt_Impl_"];
 _$UInt_UInt_$Impl_$.toFloat = function(this1) {
 	var $int = this1;
@@ -337,6 +377,7 @@ var Xml = function(nodeType) {
 	this.children = [];
 	this.attributeMap = new haxe_ds_StringMap();
 };
+$hxClasses["Xml"] = Xml;
 Xml.__name__ = ["Xml"];
 Xml.parse = function(str) {
 	return haxe_xml_Parser.parse(str);
@@ -406,10 +447,17 @@ Xml.prototype = {
 	,__class__: Xml
 };
 var com_ragestudio_Main = function() {
+	this.blackBarBot = new com_ragestudio_ui_screens_SpriteAmplified("black_bg");
+	this.blackBarTop = new com_ragestudio_ui_screens_SpriteAmplified("black_bg");
+	this.blackBarRight = new com_ragestudio_ui_screens_SpriteAmplified("black_bg");
+	this.blackBarLeft = new com_ragestudio_ui_screens_SpriteAmplified("black_bg");
+	this.frames = 0;
 	EventEmitter.call(this);
 	var lOptions = { };
-	lOptions.backgroundColor = 10066329;
+	lOptions.backgroundColor = 10338426;
+	com_ragestudio_utils_system_DeviceCapabilities.scaleViewport();
 	this.renderer = PIXI.autoDetectRenderer(_$UInt_UInt_$Impl_$.toFloat(com_ragestudio_utils_system_DeviceCapabilities.get_width()),_$UInt_UInt_$Impl_$.toFloat(com_ragestudio_utils_system_DeviceCapabilities.get_height()),lOptions);
+	this.renderer.roundPixels = true;
 	window.document.body.appendChild(this.renderer.view);
 	this.stage = new PIXI.Container();
 	var lConfig = new PIXI.loaders.Loader();
@@ -418,6 +466,7 @@ var com_ragestudio_Main = function() {
 	lConfig.once("complete",$bind(this,this.preloadAssets));
 	lConfig.load();
 };
+$hxClasses["com.ragestudio.Main"] = com_ragestudio_Main;
 com_ragestudio_Main.__name__ = ["com","ragestudio","Main"];
 com_ragestudio_Main.main = function() {
 	com_ragestudio_Main.getInstance();
@@ -433,45 +482,25 @@ com_ragestudio_Main.prototype = $extend(EventEmitter.prototype,{
 		if(com_ragestudio_utils_Config.get_debug()) com_ragestudio_utils_Debug.getInstance().init();
 		if(com_ragestudio_utils_Config.get_debug() && com_ragestudio_utils_Config.get_data().boxAlpha != null) com_ragestudio_utils_game_StateGraphic.boxAlpha = com_ragestudio_utils_Config.get_data().boxAlpha;
 		if(com_ragestudio_utils_Config.get_debug() && com_ragestudio_utils_Config.get_data().animAlpha != null) com_ragestudio_utils_game_StateGraphic.animAlpha = com_ragestudio_utils_Config.get_data().animAlpha;
+		com_ragestudio_utils_system_DeviceCapabilities.init();
 		com_ragestudio_utils_game_GameStage.getInstance().set_scaleMode(com_ragestudio_utils_game_GameStageScale.SHOW_ALL);
-		com_ragestudio_utils_game_GameStage.getInstance().init($bind(this,this.render),2048,1366,true);
+		com_ragestudio_utils_game_GameStage.getInstance().init($bind(this,this.render),2048,1366);
 		com_ragestudio_utils_system_DeviceCapabilities.displayFullScreenButton();
 		this.stage.addChild(com_ragestudio_utils_game_GameStage.getInstance());
 		window.addEventListener("resize",$bind(this,this.resize));
 		this.resize();
-		var lLoader = new com_ragestudio_utils_loader_GameLoader();
-		lLoader.addAssetFile("black_bg.png");
-		lLoader.addAssetFile("preload.png");
-		lLoader.addAssetFile("preload_bg.png");
-		lLoader.once("complete",$bind(this,this.loadAssets));
-		lLoader.load();
+		com_ragestudio_ui_LoaderManager.getInstance().startLoadingProcess("preload",$bind(this,this.loadAssets));
 	}
 	,loadAssets: function(pLoader) {
-		var lLoader = new com_ragestudio_utils_loader_GameLoader();
-		lLoader.addTxtFile("boxes.json");
-		lLoader.addSoundFile("sounds.json");
-		lLoader.addAssetFile("alpha_bg.png");
-		lLoader.addAssetFile("TitleCard_bg.png");
-		lLoader.addAssetFile("Confirm.png");
-		lLoader.addAssetFile("Template.json");
-		lLoader.addFontFile("fonts.css");
-		lLoader.on("progress",$bind(this,this.onLoadProgress));
-		lLoader.once("complete",$bind(this,this.onLoadComplete));
-		com_ragestudio_ui_UIManager.getInstance().openScreen(com_ragestudio_ui_GraphicLoader.getInstance());
-		window.requestAnimationFrame($bind(this,this.gameLoop));
-		lLoader.load();
+		com_ragestudio_ui_LoaderManager.getInstance().startLoadingProcess("general",$bind(this,this.onLoadComplete));
+		com_ragestudio_ui_UIManager.getInstance().openScreen(com_ragestudio_ui_screens_GraphicLoader.getInstance());
+		this.gameLoop();
 	}
-	,onLoadProgress: function(pLoader) {
-		com_ragestudio_ui_GraphicLoader.getInstance().update(pLoader.progress / 100);
-	}
-	,onLoadComplete: function(pLoader) {
-		pLoader.off("progress",$bind(this,this.onLoadProgress));
-		com_ragestudio_utils_game_StateGraphic.addTextures(com_ragestudio_utils_loader_GameLoader.getContent("Template.json"));
-		com_ragestudio_utils_game_StateGraphic.addBoxes(com_ragestudio_utils_loader_GameLoader.getContent("boxes.json"));
+	,onLoadComplete: function() {
 		com_ragestudio_ui_UIManager.getInstance().openScreen(com_ragestudio_ui_screens_TitleCard.getInstance());
 	}
-	,gameLoop: function(pID) {
-		window.requestAnimationFrame($bind(this,this.gameLoop));
+	,gameLoop: function() {
+		haxe_Timer.delay($bind(this,this.gameLoop),16);
 		this.render();
 		this.emit("gameLoop");
 	}
@@ -480,7 +509,7 @@ com_ragestudio_Main.prototype = $extend(EventEmitter.prototype,{
 		com_ragestudio_utils_game_GameStage.getInstance().resize();
 	}
 	,render: function() {
-		this.renderer.render(this.stage);
+		if(this.frames++ % 2 == 0) this.renderer.render(this.stage); else com_ragestudio_utils_game_GameStage.getInstance().updateTransform();
 	}
 	,destroy: function() {
 		window.removeEventListener("resize",$bind(this,this.resize));
@@ -490,6 +519,7 @@ com_ragestudio_Main.prototype = $extend(EventEmitter.prototype,{
 });
 var com_ragestudio_game_GameManager = function() {
 };
+$hxClasses["com.ragestudio.game.GameManager"] = com_ragestudio_game_GameManager;
 com_ragestudio_game_GameManager.__name__ = ["com","ragestudio","game","GameManager"];
 com_ragestudio_game_GameManager.getInstance = function() {
 	if(com_ragestudio_game_GameManager.instance == null) com_ragestudio_game_GameManager.instance = new com_ragestudio_game_GameManager();
@@ -498,8 +528,16 @@ com_ragestudio_game_GameManager.getInstance = function() {
 com_ragestudio_game_GameManager.prototype = {
 	start: function() {
 		com_ragestudio_ui_UIManager.getInstance().startGame();
-		com_ragestudio_utils_game_GameStage.getInstance().getGameContainer().addChild(com_ragestudio_game_sprites_Template.getInstance());
-		com_ragestudio_game_sprites_Template.getInstance().start();
+		com_ragestudio_utils_game_GameStage.getInstance().getGameContainer().addChild(com_ragestudio_game_sprites_entities_Player.createPlayer());
+		var _g = 0;
+		var _g1 = com_ragestudio_game_sprites_entities_Player.getPlayers();
+		while(_g < _g1.length) {
+			var lPlayer = _g1[_g];
+			++_g;
+			lPlayer.x = 500;
+			lPlayer.y = 500;
+			lPlayer.start();
+		}
 		com_ragestudio_ui_CheatPanel.getInstance().ingame();
 		com_ragestudio_Main.getInstance().on("gameLoop",$bind(this,this.gameLoop));
 	}
@@ -516,6 +554,7 @@ var com_ragestudio_utils_game_GameObject = function() {
 	this.on("added",$bind(this,this.updateTransform));
 	this.setModeVoid();
 };
+$hxClasses["com.ragestudio.utils.game.GameObject"] = com_ragestudio_utils_game_GameObject;
 com_ragestudio_utils_game_GameObject.__name__ = ["com","ragestudio","utils","game","GameObject"];
 com_ragestudio_utils_game_GameObject.__super__ = PIXI.Container;
 com_ragestudio_utils_game_GameObject.prototype = $extend(PIXI.Container.prototype,{
@@ -549,6 +588,7 @@ var com_ragestudio_utils_game_StateGraphic = function() {
 	this.ANIM_SUFFIX = "";
 	com_ragestudio_utils_game_GameObject.call(this);
 };
+$hxClasses["com.ragestudio.utils.game.StateGraphic"] = com_ragestudio_utils_game_StateGraphic;
 com_ragestudio_utils_game_StateGraphic.__name__ = ["com","ragestudio","utils","game","StateGraphic"];
 com_ragestudio_utils_game_StateGraphic.set_textureDigits = function(pDigits) {
 	com_ragestudio_utils_game_StateGraphic.digits = "";
@@ -572,6 +612,7 @@ com_ragestudio_utils_game_StateGraphic.addTextures = function(pJson) {
 	while(_g < _g1.length) {
 		var lName = _g1[_g];
 		++_g;
+		console.log(lName);
 		lID = lName.split(".")[0];
 		lNum = Std.parseInt(HxOverrides.substr(lID,-1 * com_ragestudio_utils_game_StateGraphic.textureDigits,null));
 		if(lNum != null) lID = HxOverrides.substr(lID,0,lID.length - com_ragestudio_utils_game_StateGraphic.textureDigits);
@@ -787,45 +828,228 @@ com_ragestudio_utils_game_StateGraphic.prototype = $extend(com_ragestudio_utils_
 	}
 	,__class__: com_ragestudio_utils_game_StateGraphic
 });
-var com_ragestudio_game_sprites_Template = function() {
+var com_ragestudio_game_sprites_PoolObject = function(pAsset) {
 	com_ragestudio_utils_game_StateGraphic.call(this);
-	this.boxType = com_ragestudio_utils_game_BoxType.SIMPLE;
-	if(com_ragestudio_utils_system_DeviceCapabilities.get_system() == "Desktop") window.addEventListener("click",$bind(this,this.onClick)); else window.addEventListener("touchstart",$bind(this,this.onTouch));
+	if(pAsset == null) pAsset = Type.getClassName(js_Boot.getClass(this)).split(".").pop();
+	this.assetName = pAsset;
 };
-com_ragestudio_game_sprites_Template.__name__ = ["com","ragestudio","game","sprites","Template"];
-com_ragestudio_game_sprites_Template.getInstance = function() {
-	if(com_ragestudio_game_sprites_Template.instance == null) com_ragestudio_game_sprites_Template.instance = new com_ragestudio_game_sprites_Template();
-	return com_ragestudio_game_sprites_Template.instance;
-};
-com_ragestudio_game_sprites_Template.__super__ = com_ragestudio_utils_game_StateGraphic;
-com_ragestudio_game_sprites_Template.prototype = $extend(com_ragestudio_utils_game_StateGraphic.prototype,{
-	setModeNormal: function() {
-		this.setState(this.DEFAULT_STATE,true);
-		com_ragestudio_utils_game_StateGraphic.prototype.setModeNormal.call(this);
+$hxClasses["com.ragestudio.game.sprites.PoolObject"] = com_ragestudio_game_sprites_PoolObject;
+com_ragestudio_game_sprites_PoolObject.__name__ = ["com","ragestudio","game","sprites","PoolObject"];
+com_ragestudio_game_sprites_PoolObject.__super__ = com_ragestudio_utils_game_StateGraphic;
+com_ragestudio_game_sprites_PoolObject.prototype = $extend(com_ragestudio_utils_game_StateGraphic.prototype,{
+	init: function() {
 	}
-	,onTouch: function(pEvent) {
-		if(!js_Boot.__instanceof(pEvent.target,HTMLCanvasElement)) return;
-		this.setPosition(new PIXI.Point(pEvent.targetTouches[pEvent.targetTouches.length - 1].clientX,pEvent.targetTouches[pEvent.targetTouches.length - 1].clientY));
-	}
-	,onClick: function(pEvent) {
-		if(!js_Boot.__instanceof(pEvent.target,HTMLCanvasElement)) return;
-		this.setPosition(new PIXI.Point(pEvent.layerX,pEvent.layerY));
-	}
-	,setPosition: function(pGlobal) {
-		var lLocal = this.parent.toLocal(pGlobal);
-		this.position.set(lLocal.x,lLocal.y);
+	,dispose: function() {
+		com_ragestudio_game_PoolManager.addToPool(this.assetName,this);
+		this.removeAllListeners();
+		this.setModeVoid();
 	}
 	,destroy: function() {
-		window.removeEventListener("click",$bind(this,this.onClick));
-		window.removeEventListener("touchstart",$bind(this,this.onTouch));
-		com_ragestudio_game_sprites_Template.instance = null;
+		this.dispose();
+		com_ragestudio_game_PoolManager.available.get(this.assetName).splice((function($this) {
+			var $r;
+			var _this = com_ragestudio_game_PoolManager.available.get($this.assetName);
+			$r = HxOverrides.indexOf(_this,$this,0);
+			return $r;
+		}(this)),1);
 		com_ragestudio_utils_game_StateGraphic.prototype.destroy.call(this);
 	}
-	,__class__: com_ragestudio_game_sprites_Template
+	,getMidCoords: function() {
+		return new PIXI.Point(this.x + (0.5 - this.getAnchor(this.state).x) * this.anim.width,this.y + (0.5 - this.getAnchor(this.state).y) * this.anim.height);
+	}
+	,__class__: com_ragestudio_game_sprites_PoolObject
+});
+var com_ragestudio_game_sprites_Mobile = function(pAsset) {
+	com_ragestudio_game_sprites_PoolObject.call(this,pAsset);
+	this.boxType = com_ragestudio_utils_game_BoxType.SIMPLE;
+};
+$hxClasses["com.ragestudio.game.sprites.Mobile"] = com_ragestudio_game_sprites_Mobile;
+com_ragestudio_game_sprites_Mobile.__name__ = ["com","ragestudio","game","sprites","Mobile"];
+com_ragestudio_game_sprites_Mobile.__super__ = com_ragestudio_game_sprites_PoolObject;
+com_ragestudio_game_sprites_Mobile.prototype = $extend(com_ragestudio_game_sprites_PoolObject.prototype,{
+	dispose: function() {
+		if(this.parent != null) this.parent.removeChild(this);
+		com_ragestudio_game_sprites_PoolObject.prototype.dispose.call(this);
+	}
+	,start: function() {
+		com_ragestudio_game_sprites_PoolObject.prototype.start.call(this);
+		this.setState("wait",true);
+	}
+	,getDistanceToObject: function(pObject) {
+		var lMid1 = pObject.getMidCoords();
+		var lMid2 = this.getMidCoords();
+		return Math.sqrt(Math.pow(lMid1.x - lMid2.x,2) + Math.pow(lMid1.y - lMid2.y,2));
+	}
+	,__class__: com_ragestudio_game_sprites_Mobile
+});
+var com_ragestudio_game_sprites_Character = function(pAsset) {
+	com_ragestudio_game_sprites_Mobile.call(this,pAsset);
+};
+$hxClasses["com.ragestudio.game.sprites.Character"] = com_ragestudio_game_sprites_Character;
+com_ragestudio_game_sprites_Character.__name__ = ["com","ragestudio","game","sprites","Character"];
+com_ragestudio_game_sprites_Character.__super__ = com_ragestudio_game_sprites_Mobile;
+com_ragestudio_game_sprites_Character.prototype = $extend(com_ragestudio_game_sprites_Mobile.prototype,{
+	__class__: com_ragestudio_game_sprites_Character
+});
+var com_ragestudio_game_sprites_entities_Player = function(pAsset) {
+	com_ragestudio_game_sprites_Character.call(this,pAsset);
+};
+$hxClasses["com.ragestudio.game.sprites.entities.Player"] = com_ragestudio_game_sprites_entities_Player;
+com_ragestudio_game_sprites_entities_Player.__name__ = ["com","ragestudio","game","sprites","entities","Player"];
+com_ragestudio_game_sprites_entities_Player.createPlayer = function() {
+	var lPlayer;
+	lPlayer = js_Boot.__cast(com_ragestudio_game_PoolManager.getFromPool("Player") , com_ragestudio_game_sprites_entities_Player);
+	com_ragestudio_game_sprites_entities_Player.list.push(lPlayer);
+	return lPlayer;
+};
+com_ragestudio_game_sprites_entities_Player.getPlayers = function() {
+	return com_ragestudio_game_sprites_entities_Player.list;
+};
+com_ragestudio_game_sprites_entities_Player.__super__ = com_ragestudio_game_sprites_Character;
+com_ragestudio_game_sprites_entities_Player.prototype = $extend(com_ragestudio_game_sprites_Character.prototype,{
+	dispose: function() {
+		com_ragestudio_game_sprites_Character.prototype.dispose.call(this);
+		com_ragestudio_game_sprites_entities_Player.list.splice(HxOverrides.indexOf(com_ragestudio_game_sprites_entities_Player.list,this,0),1);
+	}
+	,__class__: com_ragestudio_game_sprites_entities_Player
+});
+var com_ragestudio_game_Generator = function() {
+};
+$hxClasses["com.ragestudio.game.Generator"] = com_ragestudio_game_Generator;
+com_ragestudio_game_Generator.__name__ = ["com","ragestudio","game","Generator"];
+com_ragestudio_game_Generator.getInstance = function() {
+	if(com_ragestudio_game_Generator.instance == null) com_ragestudio_game_Generator.instance = new com_ragestudio_game_Generator();
+	return com_ragestudio_game_Generator.instance;
+};
+com_ragestudio_game_Generator.generateElement = function(pJson,pName,pCheckForExisting) {
+	if(pCheckForExisting == null) pCheckForExisting = true;
+	var lPos = new PIXI.Point(pJson.x,pJson.y);
+	var lContainer = com_ragestudio_game_Generator.getRightContainer(pJson.type);
+	if(pCheckForExisting && lContainer.getChildByName(pName) != null) return js_Boot.__cast(lContainer.getChildByName(pName) , com_ragestudio_game_sprites_PoolObject);
+	var lElement = com_ragestudio_game_PoolManager.getFromPool(pJson.type);
+	lElement.name = pName;
+	lElement.x = lPos.x;
+	lElement.y = lPos.y;
+	lElement.scale.x = pJson.scaleX;
+	lElement.scale.y = pJson.scaleY;
+	lElement.rotation = pJson.rotation / 180 * Math.PI;
+	lContainer.addChild(lElement);
+	lElement.start();
+	return lElement;
+};
+com_ragestudio_game_Generator.createInstanceFromStringType = function(pElementName) {
+	var lElement;
+	var lPath = com_ragestudio_game_Generator.getPathToClass(pElementName);
+	lElement = Type.createInstance(Type.resolveClass(lPath),[]);
+	return lElement;
+};
+com_ragestudio_game_Generator.getRightContainer = function(pElementType) {
+	return com_ragestudio_game_sprites_planes_GamePlane.getInstance().limitContainer;
+};
+com_ragestudio_game_Generator.getPathToClass = function(pClassName) {
+	var path;
+	if(com_ragestudio_game_Generator.ELEMENT_LIST.get(pClassName) != null) return com_ragestudio_game_Generator.ELEMENT_LIST.get(pClassName);
+	console.log("ERROR 404 : Path not found");
+	return com_ragestudio_game_Generator.ELEMENT_LIST.get("Player");
+};
+com_ragestudio_game_Generator.prototype = {
+	destroy: function() {
+		com_ragestudio_game_Generator.instance = null;
+	}
+	,__class__: com_ragestudio_game_Generator
+};
+var com_ragestudio_game_PoolManager = function() {
+};
+$hxClasses["com.ragestudio.game.PoolManager"] = com_ragestudio_game_PoolManager;
+com_ragestudio_game_PoolManager.__name__ = ["com","ragestudio","game","PoolManager"];
+com_ragestudio_game_PoolManager.init = function() {
+	var poolJson = com_ragestudio_utils_loader_GameLoader.getContent("pool.json");
+	var jsonObject = Reflect.fields(poolJson);
+	var _g = 0;
+	while(_g < jsonObject.length) {
+		var key = jsonObject[_g];
+		++_g;
+		var _g2 = 0;
+		var _g1 = Reflect.field(poolJson,key);
+		while(_g2 < _g1) {
+			var i = _g2++;
+			com_ragestudio_game_PoolManager.addToPool(key,com_ragestudio_game_Generator.createInstanceFromStringType(key));
+		}
+	}
+};
+com_ragestudio_game_PoolManager.addToPool = function(pType,pInstance) {
+	if(!com_ragestudio_game_PoolManager.available.exists(pType)) com_ragestudio_game_PoolManager.available.set(pType,[]);
+	com_ragestudio_game_PoolManager.available.get(pType).unshift(pInstance);
+};
+com_ragestudio_game_PoolManager.getFromPool = function(pType) {
+	var lInstance;
+	if(!com_ragestudio_game_PoolManager.available.exists(pType) || com_ragestudio_game_PoolManager.available.get(pType).length == 0) {
+		lInstance = com_ragestudio_game_Generator.createInstanceFromStringType(pType);
+		com_ragestudio_game_PoolManager.addToPool(pType,lInstance);
+	}
+	lInstance = com_ragestudio_game_PoolManager.available.get(pType).pop();
+	lInstance.init();
+	return lInstance;
+};
+com_ragestudio_game_PoolManager.clear = function(pType) {
+	com_ragestudio_game_PoolManager.available.remove(pType);
+};
+com_ragestudio_game_PoolManager.clearAll = function() {
+	var $it0 = com_ragestudio_game_PoolManager.available.keys();
+	while( $it0.hasNext() ) {
+		var lType = $it0.next();
+		com_ragestudio_game_PoolManager.clear(lType);
+	}
+};
+com_ragestudio_game_PoolManager.prototype = {
+	__class__: com_ragestudio_game_PoolManager
+};
+var com_ragestudio_game_sprites_planes_GamePlane = function() {
+	this.collectableContainer = new PIXI.Container();
+	this.enemiesContainer = new PIXI.Container();
+	this.killZonesContainer = new PIXI.Container();
+	this.destructibleContainer = new PIXI.Container();
+	this.platformContainer = new PIXI.Container();
+	this.limitContainer = new PIXI.Container();
+	this.groundContainer = new PIXI.Container();
+	this.wallContainer = new PIXI.Container();
+	com_ragestudio_utils_game_GameObject.call(this);
+	this.addChild(this.platformContainer);
+	this.addChild(this.destructibleContainer);
+	this.addChild(this.wallContainer);
+	this.addChild(this.groundContainer);
+	this.addChild(this.enemiesContainer);
+	this.addChild(this.collectableContainer);
+	this.addChild(this.limitContainer);
+	this.addChild(this.killZonesContainer);
+};
+$hxClasses["com.ragestudio.game.sprites.planes.GamePlane"] = com_ragestudio_game_sprites_planes_GamePlane;
+com_ragestudio_game_sprites_planes_GamePlane.__name__ = ["com","ragestudio","game","sprites","planes","GamePlane"];
+com_ragestudio_game_sprites_planes_GamePlane.getInstance = function() {
+	if(com_ragestudio_game_sprites_planes_GamePlane.instance == null) com_ragestudio_game_sprites_planes_GamePlane.instance = new com_ragestudio_game_sprites_planes_GamePlane();
+	return com_ragestudio_game_sprites_planes_GamePlane.instance;
+};
+com_ragestudio_game_sprites_planes_GamePlane.__super__ = com_ragestudio_utils_game_GameObject;
+com_ragestudio_game_sprites_planes_GamePlane.prototype = $extend(com_ragestudio_utils_game_GameObject.prototype,{
+	destroy: function() {
+		this.removeChild(this.platformContainer);
+		this.removeChild(this.destructibleContainer);
+		this.removeChild(this.wallContainer);
+		this.removeChild(this.groundContainer);
+		this.removeChild(this.enemiesContainer);
+		this.removeChild(this.collectableContainer);
+		this.removeChild(this.limitContainer);
+		this.removeChild(this.killZonesContainer);
+		if(this.parent != null) this.parent.removeChild(this);
+		com_ragestudio_game_sprites_planes_GamePlane.instance = null;
+		com_ragestudio_utils_game_GameObject.prototype.destroy.call(this);
+	}
+	,__class__: com_ragestudio_game_sprites_planes_GamePlane
 });
 var com_ragestudio_ui_CheatPanel = function() {
 	this.init();
 };
+$hxClasses["com.ragestudio.ui.CheatPanel"] = com_ragestudio_ui_CheatPanel;
 com_ragestudio_ui_CheatPanel.__name__ = ["com","ragestudio","ui","CheatPanel"];
 com_ragestudio_ui_CheatPanel.getInstance = function() {
 	if(com_ragestudio_ui_CheatPanel.instance == null) com_ragestudio_ui_CheatPanel.instance = new com_ragestudio_ui_CheatPanel();
@@ -837,8 +1061,8 @@ com_ragestudio_ui_CheatPanel.prototype = {
 	}
 	,ingame: function() {
 		if(this.gui == null) return;
-		this.gui.add(com_ragestudio_game_sprites_Template.getInstance(),"x",-1000,1000).listen();
-		this.gui.add(com_ragestudio_game_sprites_Template.getInstance(),"y",-500,500).listen();
+		this.gui.add(com_ragestudio_game_sprites_entities_Player.getPlayers(),"x",-1000,1000).listen();
+		this.gui.add(com_ragestudio_game_sprites_entities_Player.getPlayers(),"y",-500,500).listen();
 	}
 	,clear: function() {
 		if(this.gui == null) return;
@@ -850,12 +1074,257 @@ com_ragestudio_ui_CheatPanel.prototype = {
 	}
 	,__class__: com_ragestudio_ui_CheatPanel
 };
+var com_ragestudio_utils_loader_GameLoader = function() {
+	this.soundsList = [];
+	this.soundsSpecs = new haxe_ds_StringMap();
+	PIXI.loaders.Loader.call(this);
+	this.once("complete",$bind(this,this.onComplete));
+};
+$hxClasses["com.ragestudio.utils.loader.GameLoader"] = com_ragestudio_utils_loader_GameLoader;
+com_ragestudio_utils_loader_GameLoader.__name__ = ["com","ragestudio","utils","loader","GameLoader"];
+com_ragestudio_utils_loader_GameLoader.getContent = function(pFile) {
+	var key = com_ragestudio_utils_Config.get_txtsPath() + pFile;
+	return com_ragestudio_utils_loader_GameLoader.txtLoaded.get(key);
+};
+com_ragestudio_utils_loader_GameLoader.__super__ = PIXI.loaders.Loader;
+com_ragestudio_utils_loader_GameLoader.prototype = $extend(PIXI.loaders.Loader.prototype,{
+	addTxtFile: function(pUrl) {
+		var lUrl = com_ragestudio_utils_Config.get_txtsPath() + pUrl;
+		this.add(com_ragestudio_utils_Config.url(lUrl));
+	}
+	,addAssetFile: function(pUrl) {
+		var lUrl = com_ragestudio_utils_Config.get_assetsPath() + pUrl;
+		this.add(com_ragestudio_utils_Config.url(lUrl));
+	}
+	,addSoundFile: function(pUrl) {
+		var lUrl = com_ragestudio_utils_Config.get_soundsPath() + pUrl;
+		this.soundsList.push(lUrl);
+		this.add(com_ragestudio_utils_Config.url(lUrl));
+	}
+	,addFontFile: function(pUrl) {
+		var lUrl = com_ragestudio_utils_Config.get_fontsPath() + pUrl;
+		this.add(com_ragestudio_utils_Config.url(lUrl));
+	}
+	,parseData: function(pResource,pNext) {
+		console.log(pResource.url + " loaded");
+		var lUrl = pResource.url.split("?")[0];
+		if(lUrl.indexOf(".css") > 0) {
+			var lData = pResource.data.split(";");
+			var lFamilies = [];
+			var lReg = new EReg("font-family:\\s?(.*)","");
+			var _g1 = 0;
+			var _g = lData.length;
+			while(_g1 < _g) {
+				var i = _g1++;
+				if(lReg.match(lData[i])) lFamilies.push(lReg.matched(1));
+			}
+			var lWebFontConfig = { custom : { families : lFamilies, urls : [com_ragestudio_utils_Config.get_fontsPath() + "fonts.css"]}, active : pNext};
+			WebFont.load(lWebFontConfig);
+			return;
+		}
+		if(pResource.isJson) {
+			var v = pResource.data;
+			com_ragestudio_utils_loader_GameLoader.txtLoaded.set(lUrl,v);
+			v;
+			if(this.soundsList.length > 0) {
+				var lData1;
+				var _g11 = 0;
+				var _g2 = this.soundsList.length;
+				while(_g11 < _g2) {
+					var i1 = _g11++;
+					if(lUrl == this.soundsList[i1]) {
+						this.soundsList.splice(i1,1);
+						lData1 = pResource.data;
+						var _g3 = 0;
+						var _g21 = lData1.extensions.length;
+						while(_g3 < _g21) {
+							var j = _g3++;
+							if(window.Howler.codecs(lData1.extensions[j])) {
+								this.addSounds(lData1.fxs,false,lData1.extensions,lData1.extensions[i1]);
+								this.addSounds(lData1.musics,true,lData1.extensions,lData1.extensions[i1]);
+								break;
+							}
+						}
+						break;
+					}
+				}
+			}
+		} else if(pResource.isXml) {
+			var v1 = Xml.parse(new XMLSerializer().serializeToString(pResource.data));
+			com_ragestudio_utils_loader_GameLoader.txtLoaded.set(lUrl,v1);
+			v1;
+		}
+		pNext();
+	}
+	,manageCache: function(pResource,pNext) {
+		if(pResource.name != pResource.url) pResource.url = com_ragestudio_utils_Config.url(pResource.url);
+		pNext();
+	}
+	,addSounds: function(pList,pLoop,pExtensions,pCodec) {
+		var lUrl;
+		var _g = 0;
+		var _g1 = Reflect.fields(pList);
+		while(_g < _g1.length) {
+			var lID = _g1[_g];
+			++_g;
+			lUrl = com_ragestudio_utils_Config.url(com_ragestudio_utils_Config.get_soundsPath() + lID + "." + pCodec);
+			var value = { urls : [lUrl], volume : Reflect.field(pList,lID) / 100, loop : pLoop};
+			this.soundsSpecs.set(lID,value);
+			this.add(lUrl);
+		}
+	}
+	,load: function(cb) {
+		this.before($bind(this,this.manageCache));
+		this.after($bind(this,this.parseData));
+		return PIXI.loaders.Loader.prototype.load.call(this);
+	}
+	,onComplete: function() {
+		var $it0 = this.soundsSpecs.keys();
+		while( $it0.hasNext() ) {
+			var lID = $it0.next();
+			com_ragestudio_utils_sounds_SoundManager.addSound(lID,new window.Howl(this.soundsSpecs.get(lID)));
+		}
+	}
+	,__class__: com_ragestudio_utils_loader_GameLoader
+});
+var com_ragestudio_ui_LoaderManager = function() {
+	com_ragestudio_utils_loader_GameLoader.call(this);
+};
+$hxClasses["com.ragestudio.ui.LoaderManager"] = com_ragestudio_ui_LoaderManager;
+com_ragestudio_ui_LoaderManager.__name__ = ["com","ragestudio","ui","LoaderManager"];
+com_ragestudio_ui_LoaderManager.getInstance = function() {
+	if(com_ragestudio_ui_LoaderManager.instance == null) com_ragestudio_ui_LoaderManager.instance = new com_ragestudio_ui_LoaderManager();
+	return com_ragestudio_ui_LoaderManager.instance;
+};
+com_ragestudio_ui_LoaderManager.__super__ = com_ragestudio_utils_loader_GameLoader;
+com_ragestudio_ui_LoaderManager.prototype = $extend(com_ragestudio_utils_loader_GameLoader.prototype,{
+	startLoadingProcess: function(pLoadingPhase,pSuccessCallback) {
+		var _g = this;
+		var lLoader = new com_ragestudio_utils_loader_GameLoader();
+		if(pLoadingPhase == com_ragestudio_ui_LoaderManager.PRELOAD_PHASE_NAME) {
+			this.executeFunctionOnAllArrayElements(com_ragestudio_utils_Config.get_data().preload_Fonts,$bind(lLoader,lLoader.addFontFile));
+			this.executeFunctionOnAllArrayElements(com_ragestudio_utils_Config.get_data().preload_stateGraphic_Textures,$bind(lLoader,lLoader.addAssetFile));
+			this.executeFunctionOnAllArrayElements(com_ragestudio_utils_Config.get_data().preload_Assets,$bind(lLoader,lLoader.addAssetFile));
+		} else if(pLoadingPhase == com_ragestudio_ui_LoaderManager.GENERAL_PHASE_NAME) {
+			this.executeFunctionOnAllArrayElements(com_ragestudio_utils_Config.get_data().general_Assets,$bind(lLoader,lLoader.addAssetFile));
+			this.executeFunctionOnAllArrayElements(com_ragestudio_utils_Config.get_data().general_stateGraphic_Textures,$bind(lLoader,lLoader.addAssetFile));
+			this.executeFunctionOnAllArrayElements(com_ragestudio_utils_Config.get_data().general_Sounds,$bind(lLoader,lLoader.addSoundFile));
+			this.executeFunctionOnAllArrayElements(com_ragestudio_utils_Config.get_data().general_Fonts,$bind(lLoader,lLoader.addFontFile));
+			this.executeFunctionOnAllArrayElements(com_ragestudio_utils_Config.get_data().general_Texts,$bind(lLoader,lLoader.addTxtFile));
+			lLoader.on("progress",$bind(this,this.onLoadProgress));
+		} else if(pLoadingPhase == com_ragestudio_ui_LoaderManager.WORLD_PHASE_NAME) {
+			this.executeFunctionOnAllArrayElements(com_ragestudio_utils_Config.get_data().world_Assets,$bind(lLoader,lLoader.addAssetFile));
+			this.executeFunctionOnAllArrayElements(com_ragestudio_utils_Config.get_data().world_stateGraphic_Textures,$bind(lLoader,lLoader.addAssetFile));
+			lLoader.on("progress",$bind(this,this.onLoadProgress));
+		} else {
+			console.log("Unknown loading phase \"" + pLoadingPhase + "\". Should be : \"" + com_ragestudio_ui_LoaderManager.PRELOAD_PHASE_NAME + "\", \"" + com_ragestudio_ui_LoaderManager.GENERAL_PHASE_NAME + "\" or \"" + com_ragestudio_ui_LoaderManager.WORLD_PHASE_NAME + "\". Aborted loading process");
+			return;
+		}
+		lLoader.once("complete",function() {
+			_g.onProcessComplete(lLoader,pLoadingPhase,pSuccessCallback);
+		});
+		lLoader.load();
+	}
+	,onLoadProgress: function(pLoader) {
+		com_ragestudio_ui_screens_GraphicLoader.getInstance().update(pLoader.progress / 100);
+	}
+	,onProcessComplete: function(pLoader,pLoadingPhase,pSuccessCallback) {
+		var _g = this;
+		pLoader.off("progress",function() {
+			_g.onProcessComplete(pLoader,pLoadingPhase,pSuccessCallback);
+		});
+		if(pLoadingPhase == com_ragestudio_ui_LoaderManager.PRELOAD_PHASE_NAME) {
+			this.addTexturesToStateGraphic(com_ragestudio_utils_Config.get_data().preload_stateGraphic_Textures);
+			console.log(com_ragestudio_utils_Config.get_data().preload_stateGraphic_Textures);
+		} else if(pLoadingPhase == com_ragestudio_ui_LoaderManager.GENERAL_PHASE_NAME) {
+			this.addTexturesToStateGraphic(com_ragestudio_utils_Config.get_data().general_stateGraphic_Textures);
+			com_ragestudio_utils_game_StateGraphic.addBoxes(com_ragestudio_utils_loader_GameLoader.getContent("boxes.json"));
+		} else if(pLoadingPhase == com_ragestudio_ui_LoaderManager.WORLD_PHASE_NAME) this.addTexturesToStateGraphic(com_ragestudio_utils_Config.get_data().world_stateGraphic_Textures);
+		pSuccessCallback();
+	}
+	,executeFunctionOnAllArrayElements: function(pElementsArray,pFunction,pOptimized) {
+		if(pOptimized == null) pOptimized = false;
+		var lLength = pElementsArray.length;
+		var _g = 0;
+		while(_g < lLength) {
+			var i = _g++;
+			pFunction((pOptimized?com_ragestudio_utils_system_DeviceCapabilities.textureType + "/":"") + pElementsArray[i]);
+		}
+	}
+	,addTexturesToStateGraphic: function(pTexturesArray) {
+		var lLength = pTexturesArray.length;
+		var _g = 0;
+		while(_g < lLength) {
+			var i = _g++;
+			com_ragestudio_utils_game_StateGraphic.addTextures(com_ragestudio_utils_loader_GameLoader.getContent(pTexturesArray[i]));
+		}
+	}
+	,destroy: function() {
+		com_ragestudio_ui_LoaderManager.instance = null;
+	}
+	,__class__: com_ragestudio_ui_LoaderManager
+});
+var com_ragestudio_ui_UIManager = function() {
+	this.popins = [];
+};
+$hxClasses["com.ragestudio.ui.UIManager"] = com_ragestudio_ui_UIManager;
+com_ragestudio_ui_UIManager.__name__ = ["com","ragestudio","ui","UIManager"];
+com_ragestudio_ui_UIManager.getInstance = function() {
+	if(com_ragestudio_ui_UIManager.instance == null) com_ragestudio_ui_UIManager.instance = new com_ragestudio_ui_UIManager();
+	return com_ragestudio_ui_UIManager.instance;
+};
+com_ragestudio_ui_UIManager.prototype = {
+	openScreen: function(pScreen) {
+		this.closeScreens();
+		com_ragestudio_utils_game_GameStage.getInstance().getScreensContainer().addChild(pScreen);
+		pScreen.open();
+	}
+	,closeScreens: function() {
+		var lContainer = com_ragestudio_utils_game_GameStage.getInstance().getScreensContainer();
+		while(lContainer.children.length > 0) {
+			var lCurrent;
+			lCurrent = js_Boot.__cast(lContainer.getChildAt(lContainer.children.length - 1) , com_ragestudio_utils_ui_Screen);
+			lCurrent.interactive = false;
+			lContainer.removeChild(lCurrent);
+			lCurrent.close();
+		}
+	}
+	,openPopin: function(pPopin) {
+		this.popins.push(pPopin);
+		com_ragestudio_utils_game_GameStage.getInstance().getPopinsContainer().addChild(pPopin);
+		pPopin.open();
+	}
+	,closeCurrentPopin: function() {
+		if(this.popins.length == 0) return;
+		var lCurrent = this.popins.pop();
+		lCurrent.interactive = false;
+		com_ragestudio_utils_game_GameStage.getInstance().getPopinsContainer().removeChild(lCurrent);
+		lCurrent.close();
+	}
+	,openHud: function() {
+		com_ragestudio_utils_game_GameStage.getInstance().getHudContainer().addChild(com_ragestudio_ui_hud_Hud.getInstance());
+		com_ragestudio_ui_hud_Hud.getInstance().open();
+	}
+	,closeHud: function() {
+		com_ragestudio_utils_game_GameStage.getInstance().getHudContainer().removeChild(com_ragestudio_ui_hud_Hud.getInstance());
+		com_ragestudio_ui_hud_Hud.getInstance().close();
+	}
+	,startGame: function() {
+		this.closeScreens();
+		this.openHud();
+	}
+	,destroy: function() {
+		com_ragestudio_ui_UIManager.instance = null;
+	}
+	,__class__: com_ragestudio_ui_UIManager
+};
 var com_ragestudio_utils_ui_UIComponent = function() {
 	this.modalImage = "assets/alpha_bg.png";
 	this._modal = true;
 	this.positionables = [];
 	com_ragestudio_utils_game_GameObject.call(this);
 };
+$hxClasses["com.ragestudio.utils.ui.UIComponent"] = com_ragestudio_utils_ui_UIComponent;
 com_ragestudio_utils_ui_UIComponent.__name__ = ["com","ragestudio","utils","ui","UIComponent"];
 com_ragestudio_utils_ui_UIComponent.__super__ = com_ragestudio_utils_game_GameObject;
 com_ragestudio_utils_ui_UIComponent.prototype = $extend(com_ragestudio_utils_game_GameObject.prototype,{
@@ -922,107 +1391,23 @@ var com_ragestudio_utils_ui_Screen = function() {
 	com_ragestudio_utils_ui_UIComponent.call(this);
 	this.modalImage = "assets/black_bg.png";
 };
+$hxClasses["com.ragestudio.utils.ui.Screen"] = com_ragestudio_utils_ui_Screen;
 com_ragestudio_utils_ui_Screen.__name__ = ["com","ragestudio","utils","ui","Screen"];
 com_ragestudio_utils_ui_Screen.__super__ = com_ragestudio_utils_ui_UIComponent;
 com_ragestudio_utils_ui_Screen.prototype = $extend(com_ragestudio_utils_ui_UIComponent.prototype,{
 	__class__: com_ragestudio_utils_ui_Screen
 });
-var com_ragestudio_ui_GraphicLoader = function() {
-	com_ragestudio_utils_ui_Screen.call(this);
-	var lBg = new PIXI.Sprite(PIXI.Texture.fromImage(com_ragestudio_utils_Config.url(com_ragestudio_utils_Config.get_assetsPath() + "preload_bg.png")));
-	lBg.anchor.set(0.5,0.5);
-	this.addChild(lBg);
-	this.loaderBar = new PIXI.Sprite(PIXI.Texture.fromImage(com_ragestudio_utils_Config.url(com_ragestudio_utils_Config.get_assetsPath() + "preload.png")));
-	this.loaderBar.anchor.y = 0.5;
-	this.loaderBar.x = -this.loaderBar.width / 2;
-	this.addChild(this.loaderBar);
-	this.loaderBar.scale.x = 0;
-};
-com_ragestudio_ui_GraphicLoader.__name__ = ["com","ragestudio","ui","GraphicLoader"];
-com_ragestudio_ui_GraphicLoader.getInstance = function() {
-	if(com_ragestudio_ui_GraphicLoader.instance == null) com_ragestudio_ui_GraphicLoader.instance = new com_ragestudio_ui_GraphicLoader();
-	return com_ragestudio_ui_GraphicLoader.instance;
-};
-com_ragestudio_ui_GraphicLoader.__super__ = com_ragestudio_utils_ui_Screen;
-com_ragestudio_ui_GraphicLoader.prototype = $extend(com_ragestudio_utils_ui_Screen.prototype,{
-	update: function(pProgress) {
-		this.loaderBar.scale.x = pProgress;
-	}
-	,destroy: function() {
-		com_ragestudio_ui_GraphicLoader.instance = null;
-		com_ragestudio_utils_ui_Screen.prototype.destroy.call(this);
-	}
-	,__class__: com_ragestudio_ui_GraphicLoader
-});
-var com_ragestudio_ui_UIManager = function() {
-	this.popins = [];
-};
-com_ragestudio_ui_UIManager.__name__ = ["com","ragestudio","ui","UIManager"];
-com_ragestudio_ui_UIManager.getInstance = function() {
-	if(com_ragestudio_ui_UIManager.instance == null) com_ragestudio_ui_UIManager.instance = new com_ragestudio_ui_UIManager();
-	return com_ragestudio_ui_UIManager.instance;
-};
-com_ragestudio_ui_UIManager.prototype = {
-	openScreen: function(pScreen) {
-		this.closeScreens();
-		com_ragestudio_utils_game_GameStage.getInstance().getScreensContainer().addChild(pScreen);
-		pScreen.open();
-	}
-	,closeScreens: function() {
-		var lContainer = com_ragestudio_utils_game_GameStage.getInstance().getScreensContainer();
-		while(lContainer.children.length > 0) {
-			var lCurrent;
-			lCurrent = js_Boot.__cast(lContainer.getChildAt(lContainer.children.length - 1) , com_ragestudio_utils_ui_Screen);
-			lCurrent.interactive = false;
-			lContainer.removeChild(lCurrent);
-			lCurrent.close();
-		}
-	}
-	,openPopin: function(pPopin) {
-		this.popins.push(pPopin);
-		com_ragestudio_utils_game_GameStage.getInstance().getPopinsContainer().addChild(pPopin);
-		pPopin.open();
-	}
-	,closeCurrentPopin: function() {
-		if(this.popins.length == 0) return;
-		var lCurrent = this.popins.pop();
-		lCurrent.interactive = false;
-		com_ragestudio_utils_game_GameStage.getInstance().getPopinsContainer().removeChild(lCurrent);
-		lCurrent.close();
-	}
-	,openHud: function() {
-		com_ragestudio_utils_game_GameStage.getInstance().getHudContainer().addChild(com_ragestudio_ui_hud_Hud.getInstance());
-		com_ragestudio_ui_hud_Hud.getInstance().open();
-	}
-	,closeHud: function() {
-		com_ragestudio_utils_game_GameStage.getInstance().getHudContainer().removeChild(com_ragestudio_ui_hud_Hud.getInstance());
-		com_ragestudio_ui_hud_Hud.getInstance().close();
-	}
-	,startGame: function() {
-		this.closeScreens();
-		this.openHud();
-	}
-	,destroy: function() {
-		com_ragestudio_ui_UIManager.instance = null;
-	}
-	,__class__: com_ragestudio_ui_UIManager
-};
 var com_ragestudio_ui_hud_Hud = function() {
 	com_ragestudio_utils_ui_Screen.call(this);
 	this._modal = false;
-	this.hudTopLeft = new PIXI.Sprite(PIXI.Texture.fromImage(com_ragestudio_utils_Config.url(com_ragestudio_utils_Config.get_assetsPath() + "HudLeft.png")));
+	this.hudTopLeft = new PIXI.Container();
 	this.hudBottomLeft = new PIXI.Container();
-	var lTxt = new PIXI.Text((com_ragestudio_utils_system_DeviceCapabilities.get_system() == "Desktop"?"Click":"Tap") + " to move",{ font : "80px MyFont", fill : "#FFFFFF", align : "left"});
-	lTxt.position.set(20,-220);
-	this.hudBottomLeft.addChild(lTxt);
-	var lTxt2 = new PIXI.Text("or use cheat panel",{ font : "100px MyOtherFont", fill : "#000000", align : "left"});
-	lTxt2.position.set(20,-120);
-	this.hudBottomLeft.addChild(lTxt2);
 	this.addChild(this.hudTopLeft);
 	this.addChild(this.hudBottomLeft);
 	this.positionables.push({ item : this.hudTopLeft, align : "topLeft", offsetX : 0, offsetY : 0});
 	this.positionables.push({ item : this.hudBottomLeft, align : "bottomLeft", offsetX : 0, offsetY : 0});
 };
+$hxClasses["com.ragestudio.ui.hud.Hud"] = com_ragestudio_ui_hud_Hud;
 com_ragestudio_ui_hud_Hud.__name__ = ["com","ragestudio","ui","hud","Hud"];
 com_ragestudio_ui_hud_Hud.getInstance = function() {
 	if(com_ragestudio_ui_hud_Hud.instance == null) com_ragestudio_ui_hud_Hud.instance = new com_ragestudio_ui_hud_Hud();
@@ -1039,6 +1424,7 @@ com_ragestudio_ui_hud_Hud.prototype = $extend(com_ragestudio_utils_ui_Screen.pro
 var com_ragestudio_utils_ui_Popin = function() {
 	com_ragestudio_utils_ui_UIComponent.call(this);
 };
+$hxClasses["com.ragestudio.utils.ui.Popin"] = com_ragestudio_utils_ui_Popin;
 com_ragestudio_utils_ui_Popin.__name__ = ["com","ragestudio","utils","ui","Popin"];
 com_ragestudio_utils_ui_Popin.__super__ = com_ragestudio_utils_ui_UIComponent;
 com_ragestudio_utils_ui_Popin.prototype = $extend(com_ragestudio_utils_ui_UIComponent.prototype,{
@@ -1054,6 +1440,7 @@ var com_ragestudio_ui_popin_Confirm = function() {
 	this.once("click",$bind(this,this.onClick));
 	this.once("tap",$bind(this,this.onClick));
 };
+$hxClasses["com.ragestudio.ui.popin.Confirm"] = com_ragestudio_ui_popin_Confirm;
 com_ragestudio_ui_popin_Confirm.__name__ = ["com","ragestudio","ui","popin","Confirm"];
 com_ragestudio_ui_popin_Confirm.getInstance = function() {
 	if(com_ragestudio_ui_popin_Confirm.instance == null) com_ragestudio_ui_popin_Confirm.instance = new com_ragestudio_ui_popin_Confirm();
@@ -1075,6 +1462,57 @@ com_ragestudio_ui_popin_Confirm.prototype = $extend(com_ragestudio_utils_ui_Popi
 	}
 	,__class__: com_ragestudio_ui_popin_Confirm
 });
+var com_ragestudio_ui_screens_GraphicLoader = function() {
+	com_ragestudio_utils_ui_Screen.call(this);
+	var lBg = new com_ragestudio_ui_screens_SpriteAmplified("preload_bg");
+	lBg.start();
+	this.addChild(lBg);
+	this.title = new PIXI.Text("NEXT DAYS",{ font : "150px Arial black", fill : 16777215, align : "center"});
+	this.title.anchor.set(0.5,0.5);
+	this.title.y = -250.;
+	this.addChild(this.title);
+	this.pourcentage = new PIXI.Text(" ",{ font : "50px Arial black", fill : 16777215, align : "center"});
+	this.pourcentage.anchor.set(0.5,0.5);
+	this.pourcentage.y = 250.;
+	this.addChild(this.pourcentage);
+	this.loaderBar = new com_ragestudio_ui_screens_SpriteAmplified("preload");
+	this.loaderBar.start();
+	this.loaderBar.x = -this.loaderBar.width / 2;
+	this.addChild(this.loaderBar);
+	this.loaderBar.scale.x = 0;
+};
+$hxClasses["com.ragestudio.ui.screens.GraphicLoader"] = com_ragestudio_ui_screens_GraphicLoader;
+com_ragestudio_ui_screens_GraphicLoader.__name__ = ["com","ragestudio","ui","screens","GraphicLoader"];
+com_ragestudio_ui_screens_GraphicLoader.getInstance = function() {
+	if(com_ragestudio_ui_screens_GraphicLoader.instance == null) com_ragestudio_ui_screens_GraphicLoader.instance = new com_ragestudio_ui_screens_GraphicLoader();
+	return com_ragestudio_ui_screens_GraphicLoader.instance;
+};
+com_ragestudio_ui_screens_GraphicLoader.__super__ = com_ragestudio_utils_ui_Screen;
+com_ragestudio_ui_screens_GraphicLoader.prototype = $extend(com_ragestudio_utils_ui_Screen.prototype,{
+	update: function(pProgress) {
+		this.loaderBar.scale.x = pProgress;
+		this.pourcentage.text = Math.floor(pProgress * 100) + "%";
+	}
+	,destroy: function() {
+		com_ragestudio_ui_screens_GraphicLoader.instance = null;
+		com_ragestudio_utils_ui_Screen.prototype.destroy.call(this);
+	}
+	,__class__: com_ragestudio_ui_screens_GraphicLoader
+});
+var com_ragestudio_ui_screens_SpriteAmplified = function(pAssetName) {
+	this.assetName = pAssetName;
+	com_ragestudio_utils_game_StateGraphic.call(this);
+};
+$hxClasses["com.ragestudio.ui.screens.SpriteAmplified"] = com_ragestudio_ui_screens_SpriteAmplified;
+com_ragestudio_ui_screens_SpriteAmplified.__name__ = ["com","ragestudio","ui","screens","SpriteAmplified"];
+com_ragestudio_ui_screens_SpriteAmplified.__super__ = com_ragestudio_utils_game_StateGraphic;
+com_ragestudio_ui_screens_SpriteAmplified.prototype = $extend(com_ragestudio_utils_game_StateGraphic.prototype,{
+	start: function() {
+		com_ragestudio_utils_game_StateGraphic.prototype.start.call(this);
+		this.setState(this.DEFAULT_STATE);
+	}
+	,__class__: com_ragestudio_ui_screens_SpriteAmplified
+});
 var com_ragestudio_ui_screens_TitleCard = function() {
 	com_ragestudio_utils_ui_Screen.call(this);
 	this.background = new PIXI.Sprite(PIXI.Texture.fromImage(com_ragestudio_utils_Config.url(com_ragestudio_utils_Config.get_assetsPath() + "TitleCard_bg.png")));
@@ -1085,6 +1523,7 @@ var com_ragestudio_ui_screens_TitleCard = function() {
 	this.once("click",$bind(this,this.onClick));
 	this.once("tap",$bind(this,this.onClick));
 };
+$hxClasses["com.ragestudio.ui.screens.TitleCard"] = com_ragestudio_ui_screens_TitleCard;
 com_ragestudio_ui_screens_TitleCard.__name__ = ["com","ragestudio","ui","screens","TitleCard"];
 com_ragestudio_ui_screens_TitleCard.getInstance = function() {
 	if(com_ragestudio_ui_screens_TitleCard.instance == null) com_ragestudio_ui_screens_TitleCard.instance = new com_ragestudio_ui_screens_TitleCard();
@@ -1103,6 +1542,7 @@ com_ragestudio_ui_screens_TitleCard.prototype = $extend(com_ragestudio_utils_ui_
 	,__class__: com_ragestudio_ui_screens_TitleCard
 });
 var com_ragestudio_utils_Config = function() { };
+$hxClasses["com.ragestudio.utils.Config"] = com_ragestudio_utils_Config;
 com_ragestudio_utils_Config.__name__ = ["com","ragestudio","utils","Config"];
 com_ragestudio_utils_Config.init = function(pConfig) {
 	var _g = 0;
@@ -1126,6 +1566,17 @@ com_ragestudio_utils_Config.init = function(pConfig) {
 	if(com_ragestudio_utils_Config._data.assetsPath == null) com_ragestudio_utils_Config._data.assetsPath = "";
 	if(com_ragestudio_utils_Config._data.fontsPath == null) com_ragestudio_utils_Config._data.fontsPath = "";
 	if(com_ragestudio_utils_Config._data.soundsPath == null) com_ragestudio_utils_Config._data.soundsPath = "";
+	if(com_ragestudio_utils_Config._data.preload_Assets == null) com_ragestudio_utils_Config._data.preload_Assets = [];
+	if(com_ragestudio_utils_Config._data.preload_Fonts == null) com_ragestudio_utils_Config._data.preload_Fonts = [];
+	if(com_ragestudio_utils_Config._data.preload_stateGraphic_Textures == null) com_ragestudio_utils_Config._data.preload_stateGraphic_Textures = [];
+	if(com_ragestudio_utils_Config._data.general_Assets == null) com_ragestudio_utils_Config._data.general_Assets = [];
+	if(com_ragestudio_utils_Config._data.general_Sounds == null) com_ragestudio_utils_Config._data.general_Sounds = [];
+	if(com_ragestudio_utils_Config._data.general_Texts == null) com_ragestudio_utils_Config._data.general_Texts = [];
+	if(com_ragestudio_utils_Config._data.general_Fonts == null) com_ragestudio_utils_Config._data.general_Fonts = [];
+	if(com_ragestudio_utils_Config._data.general_stateGraphic_Textures == null) com_ragestudio_utils_Config._data.general_stateGraphic_Textures = [];
+	if(com_ragestudio_utils_Config._data.general_stateGraphic_Boxes == null) com_ragestudio_utils_Config._data.general_stateGraphic_Boxes = [];
+	if(com_ragestudio_utils_Config._data.world1_Assets == null) com_ragestudio_utils_Config._data.world_Assets = [];
+	if(com_ragestudio_utils_Config._data.world1_stateGraphic_Textures == null) com_ragestudio_utils_Config._data.world_stateGraphic_Textures = [];
 };
 com_ragestudio_utils_Config.url = function(pPath) {
 	return pPath + "?" + com_ragestudio_utils_Config.get_version();
@@ -1168,6 +1619,7 @@ com_ragestudio_utils_Config.get_soundsPath = function() {
 };
 var com_ragestudio_utils_Debug = function() {
 };
+$hxClasses["com.ragestudio.utils.Debug"] = com_ragestudio_utils_Debug;
 com_ragestudio_utils_Debug.__name__ = ["com","ragestudio","utils","Debug"];
 com_ragestudio_utils_Debug.getInstance = function() {
 	if(com_ragestudio_utils_Debug.instance == null) com_ragestudio_utils_Debug.instance = new com_ragestudio_utils_Debug();
@@ -1203,20 +1655,24 @@ com_ragestudio_utils_Debug.prototype = {
 	,__class__: com_ragestudio_utils_Debug
 };
 var com_ragestudio_utils_events_EventType = function() { };
+$hxClasses["com.ragestudio.utils.events.EventType"] = com_ragestudio_utils_events_EventType;
 com_ragestudio_utils_events_EventType.__name__ = ["com","ragestudio","utils","events","EventType"];
 var com_ragestudio_utils_events_LoadEventType = function() { };
+$hxClasses["com.ragestudio.utils.events.LoadEventType"] = com_ragestudio_utils_events_LoadEventType;
 com_ragestudio_utils_events_LoadEventType.__name__ = ["com","ragestudio","utils","events","LoadEventType"];
 com_ragestudio_utils_events_LoadEventType.__super__ = com_ragestudio_utils_events_EventType;
 com_ragestudio_utils_events_LoadEventType.prototype = $extend(com_ragestudio_utils_events_EventType.prototype,{
 	__class__: com_ragestudio_utils_events_LoadEventType
 });
 var com_ragestudio_utils_events_MouseEventType = function() { };
+$hxClasses["com.ragestudio.utils.events.MouseEventType"] = com_ragestudio_utils_events_MouseEventType;
 com_ragestudio_utils_events_MouseEventType.__name__ = ["com","ragestudio","utils","events","MouseEventType"];
 com_ragestudio_utils_events_MouseEventType.__super__ = com_ragestudio_utils_events_EventType;
 com_ragestudio_utils_events_MouseEventType.prototype = $extend(com_ragestudio_utils_events_EventType.prototype,{
 	__class__: com_ragestudio_utils_events_MouseEventType
 });
 var com_ragestudio_utils_events_TouchEventType = function() { };
+$hxClasses["com.ragestudio.utils.events.TouchEventType"] = com_ragestudio_utils_events_TouchEventType;
 com_ragestudio_utils_events_TouchEventType.__name__ = ["com","ragestudio","utils","events","TouchEventType"];
 com_ragestudio_utils_events_TouchEventType.__super__ = com_ragestudio_utils_events_EventType;
 com_ragestudio_utils_events_TouchEventType.prototype = $extend(com_ragestudio_utils_events_EventType.prototype,{
@@ -1237,6 +1693,7 @@ com_ragestudio_utils_game_BoxType.SELF.toString = $estr;
 com_ragestudio_utils_game_BoxType.SELF.__enum__ = com_ragestudio_utils_game_BoxType;
 var com_ragestudio_utils_game_CollisionManager = function() {
 };
+$hxClasses["com.ragestudio.utils.game.CollisionManager"] = com_ragestudio_utils_game_CollisionManager;
 com_ragestudio_utils_game_CollisionManager.__name__ = ["com","ragestudio","utils","game","CollisionManager"];
 com_ragestudio_utils_game_CollisionManager.hitTestObject = function(pObjectA,pObjectB) {
 	return com_ragestudio_utils_game_CollisionManager.getIntersection(pObjectA.getBounds(),pObjectB.getBounds());
@@ -1315,6 +1772,7 @@ var com_ragestudio_utils_game_GameStage = function() {
 	this.popinsContainer = new PIXI.Container();
 	this.addChild(this.popinsContainer);
 };
+$hxClasses["com.ragestudio.utils.game.GameStage"] = com_ragestudio_utils_game_GameStage;
 com_ragestudio_utils_game_GameStage.__name__ = ["com","ragestudio","utils","game","GameStage"];
 com_ragestudio_utils_game_GameStage.getInstance = function() {
 	if(com_ragestudio_utils_game_GameStage.instance == null) com_ragestudio_utils_game_GameStage.instance = new com_ragestudio_utils_game_GameStage();
@@ -1454,120 +1912,9 @@ com_ragestudio_utils_game_GameStageScale.NO_SCALE.__enum__ = com_ragestudio_util
 com_ragestudio_utils_game_GameStageScale.SHOW_ALL = ["SHOW_ALL",1];
 com_ragestudio_utils_game_GameStageScale.SHOW_ALL.toString = $estr;
 com_ragestudio_utils_game_GameStageScale.SHOW_ALL.__enum__ = com_ragestudio_utils_game_GameStageScale;
-var com_ragestudio_utils_loader_GameLoader = function() {
-	this.soundsList = [];
-	this.soundsSpecs = new haxe_ds_StringMap();
-	PIXI.loaders.Loader.call(this);
-	this.once("complete",$bind(this,this.onComplete));
-};
-com_ragestudio_utils_loader_GameLoader.__name__ = ["com","ragestudio","utils","loader","GameLoader"];
-com_ragestudio_utils_loader_GameLoader.getContent = function(pFile) {
-	var key = com_ragestudio_utils_Config.get_txtsPath() + pFile;
-	return com_ragestudio_utils_loader_GameLoader.txtLoaded.get(key);
-};
-com_ragestudio_utils_loader_GameLoader.__super__ = PIXI.loaders.Loader;
-com_ragestudio_utils_loader_GameLoader.prototype = $extend(PIXI.loaders.Loader.prototype,{
-	addTxtFile: function(pUrl) {
-		var lUrl = com_ragestudio_utils_Config.get_txtsPath() + pUrl;
-		this.add(com_ragestudio_utils_Config.url(lUrl));
-	}
-	,addAssetFile: function(pUrl) {
-		var lUrl = com_ragestudio_utils_Config.get_assetsPath() + pUrl;
-		this.add(com_ragestudio_utils_Config.url(lUrl));
-	}
-	,addSoundFile: function(pUrl) {
-		var lUrl = com_ragestudio_utils_Config.get_soundsPath() + pUrl;
-		this.soundsList.push(lUrl);
-		this.add(com_ragestudio_utils_Config.url(lUrl));
-	}
-	,addFontFile: function(pUrl) {
-		var lUrl = com_ragestudio_utils_Config.get_fontsPath() + pUrl;
-		this.add(com_ragestudio_utils_Config.url(lUrl));
-	}
-	,parseData: function(pResource,pNext) {
-		console.log(pResource.url + " loaded");
-		var lUrl = pResource.url.split("?")[0];
-		if(lUrl.indexOf(".css") > 0) {
-			var lData = pResource.data.split(";");
-			var lFamilies = [];
-			var lReg = new EReg("font-family:\\s?(.*)","");
-			var _g1 = 0;
-			var _g = lData.length;
-			while(_g1 < _g) {
-				var i = _g1++;
-				if(lReg.match(lData[i])) lFamilies.push(lReg.matched(1));
-			}
-			var lWebFontConfig = { custom : { families : lFamilies, urls : [com_ragestudio_utils_Config.get_fontsPath() + "fonts.css"]}, active : pNext};
-			WebFont.load(lWebFontConfig);
-			return;
-		}
-		if(pResource.isJson) {
-			var v = pResource.data;
-			com_ragestudio_utils_loader_GameLoader.txtLoaded.set(lUrl,v);
-			v;
-			if(this.soundsList.length > 0) {
-				var lData1;
-				var _g11 = 0;
-				var _g2 = this.soundsList.length;
-				while(_g11 < _g2) {
-					var i1 = _g11++;
-					if(lUrl == this.soundsList[i1]) {
-						this.soundsList.splice(i1,1);
-						lData1 = pResource.data;
-						var _g3 = 0;
-						var _g21 = lData1.extensions.length;
-						while(_g3 < _g21) {
-							var j = _g3++;
-							if(window.Howler.codecs(lData1.extensions[j])) {
-								this.addSounds(lData1.fxs,false,lData1.extensions,lData1.extensions[i1]);
-								this.addSounds(lData1.musics,true,lData1.extensions,lData1.extensions[i1]);
-								break;
-							}
-						}
-						break;
-					}
-				}
-			}
-		} else if(pResource.isXml) {
-			var v1 = Xml.parse(new XMLSerializer().serializeToString(pResource.data));
-			com_ragestudio_utils_loader_GameLoader.txtLoaded.set(lUrl,v1);
-			v1;
-		}
-		pNext();
-	}
-	,manageCache: function(pResource,pNext) {
-		if(pResource.name != pResource.url) pResource.url = com_ragestudio_utils_Config.url(pResource.url);
-		pNext();
-	}
-	,addSounds: function(pList,pLoop,pExtensions,pCodec) {
-		var lUrl;
-		var _g = 0;
-		var _g1 = Reflect.fields(pList);
-		while(_g < _g1.length) {
-			var lID = _g1[_g];
-			++_g;
-			lUrl = com_ragestudio_utils_Config.url(com_ragestudio_utils_Config.get_soundsPath() + lID + "." + pCodec);
-			var value = { urls : [lUrl], volume : Reflect.field(pList,lID) / 100, loop : pLoop};
-			this.soundsSpecs.set(lID,value);
-			this.add(lUrl);
-		}
-	}
-	,load: function(cb) {
-		this.before($bind(this,this.manageCache));
-		this.after($bind(this,this.parseData));
-		return PIXI.loaders.Loader.prototype.load.call(this);
-	}
-	,onComplete: function() {
-		var $it0 = this.soundsSpecs.keys();
-		while( $it0.hasNext() ) {
-			var lID = $it0.next();
-			com_ragestudio_utils_sounds_SoundManager.addSound(lID,new window.Howl(this.soundsSpecs.get(lID)));
-		}
-	}
-	,__class__: com_ragestudio_utils_loader_GameLoader
-});
 var com_ragestudio_utils_sounds_SoundManager = function() {
 };
+$hxClasses["com.ragestudio.utils.sounds.SoundManager"] = com_ragestudio_utils_sounds_SoundManager;
 com_ragestudio_utils_sounds_SoundManager.__name__ = ["com","ragestudio","utils","sounds","SoundManager"];
 com_ragestudio_utils_sounds_SoundManager.addSound = function(pName,pSound) {
 	if(com_ragestudio_utils_sounds_SoundManager.list == null) com_ragestudio_utils_sounds_SoundManager.list = new haxe_ds_StringMap();
@@ -1583,6 +1930,7 @@ com_ragestudio_utils_sounds_SoundManager.prototype = {
 	__class__: com_ragestudio_utils_sounds_SoundManager
 };
 var com_ragestudio_utils_system_DeviceCapabilities = function() { };
+$hxClasses["com.ragestudio.utils.system.DeviceCapabilities"] = com_ragestudio_utils_system_DeviceCapabilities;
 com_ragestudio_utils_system_DeviceCapabilities.__name__ = ["com","ragestudio","utils","system","DeviceCapabilities"];
 com_ragestudio_utils_system_DeviceCapabilities.get_height = function() {
 	return window.innerHeight;
@@ -1667,6 +2015,7 @@ com_ragestudio_utils_system_DeviceCapabilities.init = function(pHd,pMd,pLd) {
 };
 var com_ragestudio_utils_ui_UIPosition = function() {
 };
+$hxClasses["com.ragestudio.utils.ui.UIPosition"] = com_ragestudio_utils_ui_UIPosition;
 com_ragestudio_utils_ui_UIPosition.__name__ = ["com","ragestudio","utils","ui","UIPosition"];
 com_ragestudio_utils_ui_UIPosition.setPosition = function(pTarget,pPosition,pOffsetX,pOffsetY) {
 	if(pOffsetY == null) pOffsetY = 0;
@@ -1691,13 +2040,41 @@ com_ragestudio_utils_ui_UIPosition.prototype = {
 	__class__: com_ragestudio_utils_ui_UIPosition
 };
 var haxe_IMap = function() { };
+$hxClasses["haxe.IMap"] = haxe_IMap;
 haxe_IMap.__name__ = ["haxe","IMap"];
 haxe_IMap.prototype = {
 	__class__: haxe_IMap
 };
+var haxe_Timer = function(time_ms) {
+	var me = this;
+	this.id = setInterval(function() {
+		me.run();
+	},time_ms);
+};
+$hxClasses["haxe.Timer"] = haxe_Timer;
+haxe_Timer.__name__ = ["haxe","Timer"];
+haxe_Timer.delay = function(f,time_ms) {
+	var t = new haxe_Timer(time_ms);
+	t.run = function() {
+		t.stop();
+		f();
+	};
+	return t;
+};
+haxe_Timer.prototype = {
+	stop: function() {
+		if(this.id == null) return;
+		clearInterval(this.id);
+		this.id = null;
+	}
+	,run: function() {
+	}
+	,__class__: haxe_Timer
+};
 var haxe_ds_StringMap = function() {
 	this.h = { };
 };
+$hxClasses["haxe.ds.StringMap"] = haxe_ds_StringMap;
 haxe_ds_StringMap.__name__ = ["haxe","ds","StringMap"];
 haxe_ds_StringMap.__interfaces__ = [haxe_IMap];
 haxe_ds_StringMap.prototype = {
@@ -1723,6 +2100,18 @@ haxe_ds_StringMap.prototype = {
 		if(this.rh == null) return false;
 		return this.rh.hasOwnProperty("$" + key);
 	}
+	,remove: function(key) {
+		if(__map_reserved[key] != null) {
+			key = "$" + key;
+			if(this.rh == null || !this.rh.hasOwnProperty(key)) return false;
+			delete(this.rh[key]);
+			return true;
+		} else {
+			if(!this.h.hasOwnProperty(key)) return false;
+			delete(this.h[key]);
+			return true;
+		}
+	}
 	,keys: function() {
 		var _this = this.arrayKeys();
 		return HxOverrides.iter(_this);
@@ -1742,6 +2131,7 @@ haxe_ds_StringMap.prototype = {
 	,__class__: haxe_ds_StringMap
 };
 var haxe_xml_Parser = function() { };
+$hxClasses["haxe.xml.Parser"] = haxe_xml_Parser;
 haxe_xml_Parser.__name__ = ["haxe","xml","Parser"];
 haxe_xml_Parser.parse = function(str,strict) {
 	if(strict == null) strict = false;
@@ -2068,12 +2458,14 @@ var js__$Boot_HaxeError = function(val) {
 	this.message = String(val);
 	if(Error.captureStackTrace) Error.captureStackTrace(this,js__$Boot_HaxeError);
 };
+$hxClasses["js._Boot.HaxeError"] = js__$Boot_HaxeError;
 js__$Boot_HaxeError.__name__ = ["js","_Boot","HaxeError"];
 js__$Boot_HaxeError.__super__ = Error;
 js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 	__class__: js__$Boot_HaxeError
 });
 var js_Boot = function() { };
+$hxClasses["js.Boot"] = js_Boot;
 js_Boot.__name__ = ["js","Boot"];
 js_Boot.getClass = function(o) {
 	if((o instanceof Array) && o.__enum__ == null) return Array; else {
@@ -2215,18 +2607,20 @@ function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id
 if(Array.prototype.indexOf) HxOverrides.indexOf = function(a,o,i) {
 	return Array.prototype.indexOf.call(a,o,i);
 };
-String.prototype.__class__ = String;
+$hxClasses.Math = Math;
+String.prototype.__class__ = $hxClasses.String = String;
 String.__name__ = ["String"];
+$hxClasses.Array = Array;
 Array.__name__ = ["Array"];
-Date.prototype.__class__ = Date;
+Date.prototype.__class__ = $hxClasses.Date = Date;
 Date.__name__ = ["Date"];
-var Int = { __name__ : ["Int"]};
-var Dynamic = { __name__ : ["Dynamic"]};
-var Float = Number;
+var Int = $hxClasses.Int = { __name__ : ["Int"]};
+var Dynamic = $hxClasses.Dynamic = { __name__ : ["Dynamic"]};
+var Float = $hxClasses.Float = Number;
 Float.__name__ = ["Float"];
 var Bool = Boolean;
 Bool.__ename__ = ["Bool"];
-var Class = { __name__ : ["Class"]};
+var Class = $hxClasses.Class = { __name__ : ["Class"]};
 var Enum = { };
 var __map_reserved = {}
 Perf.MEASUREMENT_INTERVAL = 1000;
@@ -2254,9 +2648,30 @@ Xml.DocType = 4;
 Xml.ProcessingInstruction = 5;
 Xml.Document = 6;
 com_ragestudio_Main.configPath = "config.json";
+com_ragestudio_Main.FPS = 16;
 com_ragestudio_utils_game_StateGraphic.textureDigits = 4;
 com_ragestudio_utils_game_StateGraphic.animAlpha = 1;
 com_ragestudio_utils_game_StateGraphic.boxAlpha = 0;
+com_ragestudio_game_sprites_Mobile.WAIT_STATE = "wait";
+com_ragestudio_game_sprites_entities_Player.list = [];
+com_ragestudio_game_Generator.PLAYER_NAME = "Player";
+com_ragestudio_game_Generator.ELEMENT_LIST = (function($this) {
+	var $r;
+	var _g = new haxe_ds_StringMap();
+	{
+		var value = Type.getClassName(com_ragestudio_game_sprites_entities_Player);
+		if(__map_reserved.Player != null) _g.setReserved("Player",value); else _g.h["Player"] = value;
+	}
+	$r = _g;
+	return $r;
+}(this));
+com_ragestudio_game_PoolManager.jsonPool = new haxe_ds_StringMap();
+com_ragestudio_game_PoolManager.available = new haxe_ds_StringMap();
+com_ragestudio_utils_loader_GameLoader.txtLoaded = new haxe_ds_StringMap();
+com_ragestudio_ui_LoaderManager.PRELOAD_PHASE_NAME = "preload";
+com_ragestudio_ui_LoaderManager.GENERAL_PHASE_NAME = "general";
+com_ragestudio_ui_LoaderManager.WORLD_PHASE_NAME = "world";
+com_ragestudio_ui_screens_GraphicLoader.MARGIN_TOP = 500;
 com_ragestudio_utils_Config._data = { };
 com_ragestudio_utils_Debug.QR_SIZE = 0.35;
 com_ragestudio_utils_events_EventType.GAME_LOOP = "gameLoop";
@@ -2285,7 +2700,6 @@ com_ragestudio_utils_events_TouchEventType.TOUCH_END_OUTSIDE = "touchendoutside"
 com_ragestudio_utils_events_TouchEventType.TAP = "tap";
 com_ragestudio_utils_game_GameStage.SAFE_ZONE_WIDTH = 2048;
 com_ragestudio_utils_game_GameStage.SAFE_ZONE_HEIGHT = 1366;
-com_ragestudio_utils_loader_GameLoader.txtLoaded = new haxe_ds_StringMap();
 com_ragestudio_utils_system_DeviceCapabilities.SYSTEM_ANDROID = "Android";
 com_ragestudio_utils_system_DeviceCapabilities.SYSTEM_IOS = "iOS";
 com_ragestudio_utils_system_DeviceCapabilities.SYSTEM_BLACKBERRY = "BlackBerry";
@@ -2334,3 +2748,5 @@ haxe_xml_Parser.escapes = (function($this) {
 js_Boot.__toStr = {}.toString;
 com_ragestudio_Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}}, typeof window != "undefined" ? window : exports, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);
+
+//# sourceMappingURL=NextDays.js.map

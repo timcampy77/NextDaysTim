@@ -1,7 +1,7 @@
 package com.ragestudio.game;
 import com.ragestudio.game.Generator;
 import com.ragestudio.game.sprites.PoolObject;
-import com.ragestudio.GameLoader;
+import com.ragestudio.utils.loader.GameLoader;
 import haxe.Json;
 
 /**

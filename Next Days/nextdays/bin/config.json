@@ -1,8 +1,7 @@
 {
-	"gameName":"Builder0",
-	"version":"0.1.0",
-	"debug":true,
-	"fps":true,
+	"version":"1.1.0",
+	"debug":false,
+	"fps":false,
 	"qrcode":true,
 	"language":"",
 	"languages":["en","fr"],
@@ -11,12 +10,23 @@
 	"soundsPath":"assets/sounds/",
 	"fontsPath":"fonts/",
 	"langPath":"localization/",
-	
-	"cheat":true,
-	"boxAlpha":0.5,
-	"animAlpha":1,
-	"texture":"",
-	
-	"test":"test of a custom data"
 
+	"preload_Assets":[""],
+	"preload_stateGraphic_Textures":["preload_sprites.json"],
+	"preload_Fonts":["MyFont.ttf"],
+
+	"general_Assets":[],
+	"general_Sounds":["sounds.json"],
+	"general_Texts":["boxes.json"],
+	"general_Fonts":["fonts.css"],
+	"general_stateGraphic_Textures":["characters_placeholder.json"],
+	"general_stateGraphic_Boxes":["boxes.json"],
+	
+	"world_Assets":["Level.json"],
+	"world_stateGraphic_Textures":["WorldElements.json", "WorldBackgrounds.json"],
+
+	"texture":"",
+	"cheat":false,
+	"boxAlpha":0,
+	"animAlpha":1
 }

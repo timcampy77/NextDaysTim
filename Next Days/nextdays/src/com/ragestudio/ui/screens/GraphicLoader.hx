@@ -1,10 +1,10 @@
-package com.ragestudio.ui;
+package com.ragestudio.ui.screens;
 
 import com.ragestudio.utils.Config;
 import com.ragestudio.utils.ui.Screen;
 import pixi.core.sprites.Sprite;
+import pixi.core.text.Text;
 import pixi.core.textures.Texture;
-
 /**
  * Preloader Graphique principal
  * @author Mathieu ANTHOINE
@@ -17,17 +17,30 @@ class GraphicLoader extends Screen
 	 */
 	private static var instance: GraphicLoader;
 
-	private var loaderBar:Sprite;
-
+	private var loaderBar:SpriteAmplified;
+	private var pourcentage:Text;
+	private var title:Text;
+	private static inline var MARGIN_TOP: Float = 500;
+	
 	public function new() 
 	{
 		super();
-		var lBg:Sprite = new Sprite(Texture.fromImage(Config.url(Config.assetsPath+"preload_bg.png")));
-		lBg.anchor.set(0.5, 0.5);
+		var lBg:SpriteAmplified = new SpriteAmplified("preload_bg");
+		lBg.start();
 		addChild(lBg);
 		
-		loaderBar = new Sprite (Texture.fromImage(Config.url(Config.assetsPath+"preload.png")));
-		loaderBar.anchor.y = 0.5;
+		title = new Text("NEXT DAYS", { font:'150px Arial black', fill : 0xFFFFFF, align : 'center' } );
+		title.anchor.set(0.5, 0.5);
+		title.y = -MARGIN_TOP/2;
+		addChild(title);
+		
+		pourcentage  = new Text(" ", { font : '50px Arial black', fill : 0xFFFFFF, align : 'center' } );
+		pourcentage.anchor.set(0.5, 0.5);
+		pourcentage.y = MARGIN_TOP/2;
+		addChild(pourcentage);
+		
+		loaderBar = new SpriteAmplified ("preload");
+		loaderBar.start();
 		loaderBar.x = -loaderBar.width / 2;
 		addChild(loaderBar);
 		loaderBar.scale.x = 0;
@@ -48,6 +61,7 @@ class GraphicLoader extends Screen
 	 */
 	public function update (pProgress:Float): Void {
 		loaderBar.scale.x = pProgress;
+		pourcentage.text = Math.floor(pProgress*100) + "%";
 	}
 	
 	/**

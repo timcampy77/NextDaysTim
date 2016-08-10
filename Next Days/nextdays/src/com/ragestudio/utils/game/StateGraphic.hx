@@ -224,19 +224,18 @@ class StateGraphic extends GameObject
 	 * @param	pJson objet contenant la description des assets
 	 */
 	static public function addTextures (pJson:Json): Void {
-		
 		var lFrames:Dynamic = Reflect.field(pJson, "frames");
 		
 		if (texturesDefinition == null) texturesDefinition = new Map<String,Int>();
 		if (texturesAnchor == null) texturesAnchor = new Map<String,Point>();
 		if (texturesCache == null) texturesCache = new Map<String,Array<Texture>>();		
 		if (digits == null) textureDigits = textureDigits;
-		
+						
 		var lID:String;
 		var lNum:Int;
 		
 		for (lName in Reflect.fields(lFrames)) {
-			
+			trace(lName);
 			lID = lName.split(".")[0];
 			lNum = Std.parseInt(lID.substr(-1*textureDigits));
 			if (lNum != null) lID = lID.substr(0, lID.length - textureDigits);
@@ -286,7 +285,6 @@ class StateGraphic extends GameObject
 		
 		if (pState == DEFAULT_STATE) lID = assetName+ANIM_SUFFIX;
 		else lID = assetName+"_" + pState+ANIM_SUFFIX;
-		
 		if (texturesCache[lID] == null) {
 			var lFrames:UInt = texturesDefinition[lID];
 			if (lFrames == 1) texturesCache[lID] =[Texture.fromFrame(lID+".png")];

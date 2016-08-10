@@ -1,5 +1,6 @@
 package com.ragestudio.ui;
-import com.ragestudio.game.sprites.Template;
+
+import com.ragestudio.game.sprites.entities.Player;
 import com.ragestudio.utils.Config;
 import dat.gui.GUI;
 
@@ -50,8 +51,8 @@ class CheatPanel
 		if (gui == null) return;
 		
 		
-		gui.add(Template.getInstance(), "x", -1000, 1000).listen();
-		gui.add(Template.getInstance(), "y", -500, 500).listen();		
+		gui.add(Player.getPlayers(), "x", -1000, 1000).listen();
+		gui.add(Player.getPlayers(), "y", -500, 500).listen();		
 	}
 	
 	/**
