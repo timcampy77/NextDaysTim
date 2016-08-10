@@ -8,6 +8,7 @@ import com.ragestudio.utils.events.EventType;
 import com.ragestudio.utils.game.CollisionManager;
 import com.ragestudio.utils.game.GameStage;
 import com.ragestudio.utils.system.DeviceCapabilities;
+import js.Browser;
 import pixi.core.graphics.Graphics;
 import pixi.core.Pixi;
 import pixi.core.sprites.Sprite;
@@ -68,6 +69,10 @@ class GameManager
 		// le renderer possède une propriété plugins qui contient une propriété interaction de type InteractionManager
 		// les instances d'InteractionManager fournissent un certain nombre d'informations comme les coordonnées globales de la souris
 		//if (DeviceCapabilities.system==DeviceCapabilities.SYSTEM_DESKTOP) trace (CollisionManager.hitTestPoint(Template.getInstance().hitBox, cast(Main.getInstance().renderer.plugins.interaction,InteractionManager).mouse.global));
+		Browser.window.addEventListener('keydown', Player.onKeyDown);
+		for (i in 0... Player.list.length ) {
+			Player.list[i].move();
+		}
 	}
 	
 	/**

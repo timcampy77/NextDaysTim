@@ -498,6 +498,13 @@ com_ragestudio_game_GameManager.prototype = {
 		com_ragestudio_Main.getInstance().on("gameLoop",$bind(this,this.gameLoop));
 	}
 	,gameLoop: function(pEvent) {
+		window.addEventListener("keydown",com_ragestudio_game_sprites_entities_Player.onKeyDown);
+		var _g1 = 0;
+		var _g = com_ragestudio_game_sprites_entities_Player.list.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			com_ragestudio_game_sprites_entities_Player.list[i].move();
+		}
 	}
 	,destroy: function() {
 		com_ragestudio_Main.getInstance().off("gameLoop",$bind(this,this.gameLoop));
@@ -861,11 +868,35 @@ com_ragestudio_game_sprites_entities_Player.createPlayer = function() {
 com_ragestudio_game_sprites_entities_Player.getPlayers = function() {
 	return com_ragestudio_game_sprites_entities_Player.list;
 };
+com_ragestudio_game_sprites_entities_Player.onKeyDown = function(pEvent) {
+	if(pEvent.keyCode == 83 || pEvent.keyCode == 90 || pEvent.keyCode == 68 || pEvent.keyCode == 81) {
+		com_ragestudio_game_sprites_entities_Player.keyDown = pEvent.keyCode;
+		com_ragestudio_game_sprites_entities_Player.canWalk = true;
+	}
+	if(pEvent.keyCode == 16) com_ragestudio_game_sprites_entities_Player.canRunning = true;
+};
 com_ragestudio_game_sprites_entities_Player.__super__ = com_ragestudio_game_sprites_Character;
 com_ragestudio_game_sprites_entities_Player.prototype = $extend(com_ragestudio_game_sprites_Character.prototype,{
 	dispose: function() {
 		com_ragestudio_game_sprites_Character.prototype.dispose.call(this);
 		com_ragestudio_game_sprites_entities_Player.list.splice(HxOverrides.indexOf(com_ragestudio_game_sprites_entities_Player.list,this,0),1);
+	}
+	,move: function() {
+		console.log(com_ragestudio_game_sprites_entities_Player.canRunning);
+		if(com_ragestudio_game_sprites_entities_Player.canWalk) {
+			if(com_ragestudio_game_sprites_entities_Player.canRunning == true) this.speed = 40; else this.speed = 20;
+			if(com_ragestudio_game_sprites_entities_Player.keyDown == 83) {
+				this.y += this.speed;
+				if(this.scale.y == 1) this.scale.y *= -1; else this.scale.y *= 1;
+			}
+			if(com_ragestudio_game_sprites_entities_Player.keyDown == 90) {
+				this.y -= this.speed;
+				if(this.scale.y == -1) this.scale.y *= -1; else this.scale.y *= 1;
+			}
+			if(com_ragestudio_game_sprites_entities_Player.keyDown == 68) this.x += this.speed;
+			if(com_ragestudio_game_sprites_entities_Player.keyDown == 81) this.x -= this.speed;
+			com_ragestudio_game_sprites_entities_Player.canWalk = false;
+		}
 	}
 	,__class__: com_ragestudio_game_sprites_entities_Player
 });
@@ -1645,6 +1676,13 @@ com_ragestudio_utils_Debug.prototype = {
 var com_ragestudio_utils_events_EventType = function() { };
 $hxClasses["com.ragestudio.utils.events.EventType"] = com_ragestudio_utils_events_EventType;
 com_ragestudio_utils_events_EventType.__name__ = ["com","ragestudio","utils","events","EventType"];
+var com_ragestudio_utils_events_KeyboardEventType = function() { };
+$hxClasses["com.ragestudio.utils.events.KeyboardEventType"] = com_ragestudio_utils_events_KeyboardEventType;
+com_ragestudio_utils_events_KeyboardEventType.__name__ = ["com","ragestudio","utils","events","KeyboardEventType"];
+com_ragestudio_utils_events_KeyboardEventType.__super__ = com_ragestudio_utils_events_EventType;
+com_ragestudio_utils_events_KeyboardEventType.prototype = $extend(com_ragestudio_utils_events_EventType.prototype,{
+	__class__: com_ragestudio_utils_events_KeyboardEventType
+});
 var com_ragestudio_utils_events_LoadEventType = function() { };
 $hxClasses["com.ragestudio.utils.events.LoadEventType"] = com_ragestudio_utils_events_LoadEventType;
 com_ragestudio_utils_events_LoadEventType.__name__ = ["com","ragestudio","utils","events","LoadEventType"];
@@ -2641,6 +2679,8 @@ com_ragestudio_utils_game_StateGraphic.animAlpha = 1;
 com_ragestudio_utils_game_StateGraphic.boxAlpha = 0;
 com_ragestudio_game_sprites_Mobile.WAIT_STATE = "wait";
 com_ragestudio_game_sprites_entities_Player.list = [];
+com_ragestudio_game_sprites_entities_Player.NORMAL_SPEED = 20;
+com_ragestudio_game_sprites_entities_Player.SPRINT_SPEED = 40;
 com_ragestudio_game_Generator.PLAYER_NAME = "Player";
 com_ragestudio_game_Generator.ELEMENT_LIST = (function($this) {
 	var $r;
@@ -2665,6 +2705,11 @@ com_ragestudio_utils_events_EventType.GAME_LOOP = "gameLoop";
 com_ragestudio_utils_events_EventType.RESIZE = "resize";
 com_ragestudio_utils_events_EventType.ADDED = "added";
 com_ragestudio_utils_events_EventType.REMOVED = "removed";
+com_ragestudio_utils_events_KeyboardEventType.KEY_DOWN = 83;
+com_ragestudio_utils_events_KeyboardEventType.KEY_UP = 90;
+com_ragestudio_utils_events_KeyboardEventType.KEY_RIGHT = 68;
+com_ragestudio_utils_events_KeyboardEventType.KEY_LEFT = 81;
+com_ragestudio_utils_events_KeyboardEventType.KEY_SHIFT = 16;
 com_ragestudio_utils_events_LoadEventType.COMPLETE = "complete";
 com_ragestudio_utils_events_LoadEventType.LOADED = "load";
 com_ragestudio_utils_events_LoadEventType.PROGRESS = "progress";
