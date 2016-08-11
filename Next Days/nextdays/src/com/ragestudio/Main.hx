@@ -207,6 +207,21 @@ class Main extends EventEmitter
 		GameStage.getInstance().resize();
 	}
 	
+	/**
+	 * retourne la position en X de la souris dans le repère global
+	 * @return x de la souris
+	 */
+	public function getMouseX (): Float {
+		return renderer.plugins.interaction.mouse.global.x;
+	}
+	
+	/**
+	 * retourne la position en y de la souris dans le repère global
+	 * @return x de la souris
+	 */
+	public function getMouseY (): Float {
+		return renderer.plugins.interaction.mouse.global.y;
+	}
 	
 	
 	/**

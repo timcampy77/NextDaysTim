@@ -1,4 +1,4 @@
-package com.ragestudio.controller;
+package com.ragestudio.game.controller;
 import com.ragestudio.utils.events.KeyboardEventType;
 import com.ragestudio.utils.ui.Keyboard;
 import js.Browser;
@@ -21,9 +21,10 @@ class ControllerKeyboard extends Controller
 			Keyboard.SPACE => false,
 			Keyboard.ESCAPE => false,
 			Keyboard.P => false,
-			Keyboard.UP => false,
-			Keyboard.RIGHT => false,
-			Keyboard.LEFT => false,
+			Keyboard.Z => false,
+			Keyboard.D => false,
+			Keyboard.Q => false,
+			Keyboard.S => false,
 			Keyboard.G => false
 		];
 		Browser.window.addEventListener(KeyboardEventType.KEY_DOWN, onKeyDown);
@@ -34,6 +35,7 @@ class ControllerKeyboard extends Controller
 	{
 		if (keyPressed[pEvent.keyCode] != null) {
 			keyPressed[pEvent.keyCode] = true;
+			trace(pEvent.keyCode);
 		}
 	}
 	
@@ -47,15 +49,19 @@ class ControllerKeyboard extends Controller
 	
 	
 	override private function get_right():Bool {
-		return keyPressed[Keyboard.RIGHT];
+		return keyPressed[Keyboard.D];
 	}
 	
 	override private function get_left():Bool {
-		return keyPressed[Keyboard.LEFT];
+		return keyPressed[Keyboard.Q];
 	}
 	
-	override private function get_jump():Bool {
-		return keyPressed[Keyboard.UP];
+	override private function get_up():Bool {
+		return keyPressed[Keyboard.Z];
+	}
+	
+	override private function get_down():Bool {
+		return keyPressed[Keyboard.S];
 	}
 	
 	override private function get_pause():Bool {

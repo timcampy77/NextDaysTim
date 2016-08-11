@@ -1,4 +1,4 @@
-package com.ragestudio.controller;
+package com.ragestudio.game.controller;
 import com.ragestudio.utils.ui.Keyboard;
 
 /**
@@ -11,7 +11,8 @@ class Controller
 	
 	public var right(get, null):Bool;
 	public var left(get, null):Bool;
-	public var jump(get, null):Bool;
+	public var up(get, null):Bool;
+	public var down(get, null):Bool;
 	public var pause(get, null):Bool;
 	public var shoot(get, null):Bool;
 	public var god(get, null):Bool;
@@ -29,7 +30,11 @@ class Controller
 		return false;
 	}
 	
-	private function get_jump():Bool {
+	private function get_up():Bool {
+		return false;
+	}
+	
+	private function get_down():Bool {
 		return false;
 	}
 	

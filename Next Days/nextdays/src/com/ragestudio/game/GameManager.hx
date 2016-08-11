@@ -5,11 +5,14 @@ import com.ragestudio.game.sprites.GridManager;
 import com.ragestudio.ui.CheatPanel;
 import com.ragestudio.ui.UIManager;
 import com.ragestudio.utils.events.EventType;
+import com.ragestudio.utils.events.MouseEventType;
 import com.ragestudio.utils.game.CollisionManager;
 import com.ragestudio.utils.game.GameStage;
 import com.ragestudio.utils.system.DeviceCapabilities;
 import js.Browser;
+import js.html.MouseEvent;
 import pixi.core.graphics.Graphics;
+import pixi.core.math.Point;
 import pixi.core.Pixi;
 import pixi.core.sprites.Sprite;
 import pixi.interaction.EventTarget;
@@ -26,6 +29,8 @@ class GameManager
 	 * instance unique de la classe GameManager
 	 */
 	private static var instance: GameManager;
+	
+	public var mousePosition:Point;
 	
 	/**
 	 * Retourne l'instance unique de la classe, et la crée si elle n'existait pas au préalable
@@ -48,13 +53,14 @@ class GameManager
 		// début de l'initialisation du jeu
 		
 		GameStage.getInstance().getGameContainer().addChild(Player.createPlayer());
-		new GridManager();
+		//new GridManager();
+		
 		for (lPlayer in Player.getPlayers()) {
 			lPlayer.x = 500;
 			lPlayer.y = 500;
 			lPlayer.start();
+			lPlayer.initControllers();
 		}
-		
 		CheatPanel.getInstance().ingame();	
 		
 		// enregistre le GameManager en tant qu'écouteur de la gameloop principale
@@ -69,7 +75,6 @@ class GameManager
 		// le renderer possède une propriété plugins qui contient une propriété interaction de type InteractionManager
 		// les instances d'InteractionManager fournissent un certain nombre d'informations comme les coordonnées globales de la souris
 		//if (DeviceCapabilities.system==DeviceCapabilities.SYSTEM_DESKTOP) trace (CollisionManager.hitTestPoint(Template.getInstance().hitBox, cast(Main.getInstance().renderer.plugins.interaction,InteractionManager).mouse.global));
-		Browser.window.addEventListener('keydown', Player.onKeyDown);
 		for (i in 0... Player.list.length ) {
 			Player.list[i].move();
 		}

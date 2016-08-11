@@ -463,6 +463,12 @@ com_ragestudio_Main.prototype = $extend(EventEmitter.prototype,{
 		this.renderer.resize(_$UInt_UInt_$Impl_$.toFloat(com_ragestudio_utils_system_DeviceCapabilities.get_width()),_$UInt_UInt_$Impl_$.toFloat(com_ragestudio_utils_system_DeviceCapabilities.get_height()));
 		com_ragestudio_utils_game_GameStage.getInstance().resize();
 	}
+	,getMouseX: function() {
+		return this.renderer.plugins.interaction.mouse.global.x;
+	}
+	,getMouseY: function() {
+		return this.renderer.plugins.interaction.mouse.global.y;
+	}
 	,render: function() {
 		if(this.frames++ % 2 == 0) this.renderer.render(this.stage); else com_ragestudio_utils_game_GameStage.getInstance().updateTransform();
 	}
@@ -484,7 +490,6 @@ com_ragestudio_game_GameManager.prototype = {
 	start: function() {
 		com_ragestudio_ui_UIManager.getInstance().startGame();
 		com_ragestudio_utils_game_GameStage.getInstance().getGameContainer().addChild(com_ragestudio_game_sprites_entities_Player.createPlayer());
-		new com_ragestudio_game_sprites_GridManager();
 		var _g = 0;
 		var _g1 = com_ragestudio_game_sprites_entities_Player.getPlayers();
 		while(_g < _g1.length) {
@@ -493,12 +498,12 @@ com_ragestudio_game_GameManager.prototype = {
 			lPlayer.x = 500;
 			lPlayer.y = 500;
 			lPlayer.start();
+			lPlayer.initControllers();
 		}
 		com_ragestudio_ui_CheatPanel.getInstance().ingame();
 		com_ragestudio_Main.getInstance().on("gameLoop",$bind(this,this.gameLoop));
 	}
 	,gameLoop: function(pEvent) {
-		window.addEventListener("keydown",com_ragestudio_game_sprites_entities_Player.onKeyDown);
 		var _g1 = 0;
 		var _g = com_ragestudio_game_sprites_entities_Player.list.length;
 		while(_g1 < _g) {
@@ -855,6 +860,7 @@ com_ragestudio_game_sprites_Character.prototype = $extend(com_ragestudio_game_sp
 	__class__: com_ragestudio_game_sprites_Character
 });
 var com_ragestudio_game_sprites_entities_Player = function(pAsset) {
+	this.speed = 5;
 	com_ragestudio_game_sprites_Character.call(this,pAsset);
 };
 $hxClasses["com.ragestudio.game.sprites.entities.Player"] = com_ragestudio_game_sprites_entities_Player;
@@ -868,35 +874,21 @@ com_ragestudio_game_sprites_entities_Player.createPlayer = function() {
 com_ragestudio_game_sprites_entities_Player.getPlayers = function() {
 	return com_ragestudio_game_sprites_entities_Player.list;
 };
-com_ragestudio_game_sprites_entities_Player.onKeyDown = function(pEvent) {
-	if(pEvent.keyCode == 83 || pEvent.keyCode == 90 || pEvent.keyCode == 68 || pEvent.keyCode == 81) {
-		com_ragestudio_game_sprites_entities_Player.keyDown = pEvent.keyCode;
-		com_ragestudio_game_sprites_entities_Player.canWalk = true;
-	}
-	if(pEvent.keyCode == 16) com_ragestudio_game_sprites_entities_Player.canRunning = true;
-};
 com_ragestudio_game_sprites_entities_Player.__super__ = com_ragestudio_game_sprites_Character;
 com_ragestudio_game_sprites_entities_Player.prototype = $extend(com_ragestudio_game_sprites_Character.prototype,{
-	dispose: function() {
+	initControllers: function() {
+		this.controller = js_Boot.__cast(new com_ragestudio_game_controller_ControllerKeyboard() , com_ragestudio_game_controller_Controller);
+	}
+	,dispose: function() {
 		com_ragestudio_game_sprites_Character.prototype.dispose.call(this);
 		com_ragestudio_game_sprites_entities_Player.list.splice(HxOverrides.indexOf(com_ragestudio_game_sprites_entities_Player.list,this,0),1);
 	}
 	,move: function() {
-		console.log(com_ragestudio_game_sprites_entities_Player.canRunning);
-		if(com_ragestudio_game_sprites_entities_Player.canWalk) {
-			if(com_ragestudio_game_sprites_entities_Player.canRunning == true) this.speed = 40; else this.speed = 20;
-			if(com_ragestudio_game_sprites_entities_Player.keyDown == 83) {
-				this.y += this.speed;
-				if(this.scale.y == 1) this.scale.y *= -1; else this.scale.y *= 1;
-			}
-			if(com_ragestudio_game_sprites_entities_Player.keyDown == 90) {
-				this.y -= this.speed;
-				if(this.scale.y == -1) this.scale.y *= -1; else this.scale.y *= 1;
-			}
-			if(com_ragestudio_game_sprites_entities_Player.keyDown == 68) this.x += this.speed;
-			if(com_ragestudio_game_sprites_entities_Player.keyDown == 81) this.x -= this.speed;
-			com_ragestudio_game_sprites_entities_Player.canWalk = false;
-		}
+		if(this.controller.get_up()) this.y -= this.speed;
+		if(this.controller.get_down()) this.y += this.speed;
+		if(this.controller.get_left()) this.x -= this.speed;
+		if(this.controller.get_right()) this.x += this.speed;
+		this.rotation = Math.atan2(com_ragestudio_Main.getInstance().getMouseY() - com_ragestudio_Main.getInstance().stage.toLocal(this.position).y,com_ragestudio_Main.getInstance().getMouseX() - com_ragestudio_Main.getInstance().stage.toLocal(this.position).x);
 	}
 	,__class__: com_ragestudio_game_sprites_entities_Player
 });
@@ -991,6 +983,92 @@ com_ragestudio_game_PoolManager.clearAll = function() {
 com_ragestudio_game_PoolManager.prototype = {
 	__class__: com_ragestudio_game_PoolManager
 };
+var com_ragestudio_game_controller_Controller = function() {
+	this.keyPressed = new haxe_ds_IntMap();
+};
+$hxClasses["com.ragestudio.game.controller.Controller"] = com_ragestudio_game_controller_Controller;
+com_ragestudio_game_controller_Controller.__name__ = ["com","ragestudio","game","controller","Controller"];
+com_ragestudio_game_controller_Controller.prototype = {
+	get_right: function() {
+		return false;
+	}
+	,get_left: function() {
+		return false;
+	}
+	,get_up: function() {
+		return false;
+	}
+	,get_down: function() {
+		return false;
+	}
+	,get_pause: function() {
+		return false;
+	}
+	,get_shoot: function() {
+		return false;
+	}
+	,get_god: function() {
+		return false;
+	}
+	,__class__: com_ragestudio_game_controller_Controller
+};
+var com_ragestudio_game_controller_ControllerKeyboard = function() {
+	com_ragestudio_game_controller_Controller.call(this);
+	var _g = new haxe_ds_IntMap();
+	_g.h[32] = false;
+	_g.h[27] = false;
+	_g.h[80] = false;
+	_g.h[90] = false;
+	_g.h[68] = false;
+	_g.h[81] = false;
+	_g.h[83] = false;
+	_g.h[71] = false;
+	this.keyPressed = _g;
+	window.addEventListener("keydown",$bind(this,this.onKeyDown));
+	window.addEventListener("keyup",$bind(this,this.onKeyUp));
+};
+$hxClasses["com.ragestudio.game.controller.ControllerKeyboard"] = com_ragestudio_game_controller_ControllerKeyboard;
+com_ragestudio_game_controller_ControllerKeyboard.__name__ = ["com","ragestudio","game","controller","ControllerKeyboard"];
+com_ragestudio_game_controller_ControllerKeyboard.__super__ = com_ragestudio_game_controller_Controller;
+com_ragestudio_game_controller_ControllerKeyboard.prototype = $extend(com_ragestudio_game_controller_Controller.prototype,{
+	onKeyDown: function(pEvent) {
+		if(this.keyPressed.h[pEvent.keyCode] != null) {
+			{
+				this.keyPressed.h[pEvent.keyCode] = true;
+				true;
+			}
+			console.log(pEvent.keyCode);
+		}
+	}
+	,onKeyUp: function(pEvent) {
+		if(this.keyPressed.h[pEvent.keyCode] != null) {
+			this.keyPressed.h[pEvent.keyCode] = false;
+			false;
+		}
+	}
+	,get_right: function() {
+		return this.keyPressed.h[68];
+	}
+	,get_left: function() {
+		return this.keyPressed.h[81];
+	}
+	,get_up: function() {
+		return this.keyPressed.h[90];
+	}
+	,get_down: function() {
+		return this.keyPressed.h[83];
+	}
+	,get_pause: function() {
+		if(this.keyPressed.h[27]) return this.keyPressed.h[27]; else return this.keyPressed.h[80];
+	}
+	,get_shoot: function() {
+		return this.keyPressed.h[32];
+	}
+	,get_god: function() {
+		return this.keyPressed.h[71];
+	}
+	,__class__: com_ragestudio_game_controller_ControllerKeyboard
+});
 var com_ragestudio_game_sprites_GridManager = function(texture) {
 	PIXI.Sprite.call(this,texture);
 	this.gridGeneration();
@@ -2039,6 +2117,13 @@ com_ragestudio_utils_system_DeviceCapabilities.init = function(pHd,pMd,pLd) {
 	}
 	com_ragestudio_utils_system_DeviceCapabilities.textureRatio = com_ragestudio_utils_system_DeviceCapabilities.texturesRatios.get(com_ragestudio_utils_system_DeviceCapabilities.textureType);
 };
+var com_ragestudio_utils_ui_Keyboard = function() {
+};
+$hxClasses["com.ragestudio.utils.ui.Keyboard"] = com_ragestudio_utils_ui_Keyboard;
+com_ragestudio_utils_ui_Keyboard.__name__ = ["com","ragestudio","utils","ui","Keyboard"];
+com_ragestudio_utils_ui_Keyboard.prototype = {
+	__class__: com_ragestudio_utils_ui_Keyboard
+};
 var com_ragestudio_utils_ui_UIPosition = function() {
 };
 $hxClasses["com.ragestudio.utils.ui.UIPosition"] = com_ragestudio_utils_ui_UIPosition;
@@ -2096,6 +2181,18 @@ haxe_Timer.prototype = {
 	,run: function() {
 	}
 	,__class__: haxe_Timer
+};
+var haxe_ds_IntMap = function() {
+	this.h = { };
+};
+$hxClasses["haxe.ds.IntMap"] = haxe_ds_IntMap;
+haxe_ds_IntMap.__name__ = ["haxe","ds","IntMap"];
+haxe_ds_IntMap.__interfaces__ = [haxe_IMap];
+haxe_ds_IntMap.prototype = {
+	set: function(key,value) {
+		this.h[key] = value;
+	}
+	,__class__: haxe_ds_IntMap
 };
 var haxe_ds_StringMap = function() {
 	this.h = { };
@@ -2705,11 +2802,8 @@ com_ragestudio_utils_events_EventType.GAME_LOOP = "gameLoop";
 com_ragestudio_utils_events_EventType.RESIZE = "resize";
 com_ragestudio_utils_events_EventType.ADDED = "added";
 com_ragestudio_utils_events_EventType.REMOVED = "removed";
-com_ragestudio_utils_events_KeyboardEventType.KEY_DOWN = 83;
-com_ragestudio_utils_events_KeyboardEventType.KEY_UP = 90;
-com_ragestudio_utils_events_KeyboardEventType.KEY_RIGHT = 68;
-com_ragestudio_utils_events_KeyboardEventType.KEY_LEFT = 81;
-com_ragestudio_utils_events_KeyboardEventType.KEY_SHIFT = 16;
+com_ragestudio_utils_events_KeyboardEventType.KEY_DOWN = "keydown";
+com_ragestudio_utils_events_KeyboardEventType.KEY_UP = "keyup";
 com_ragestudio_utils_events_LoadEventType.COMPLETE = "complete";
 com_ragestudio_utils_events_LoadEventType.LOADED = "load";
 com_ragestudio_utils_events_LoadEventType.PROGRESS = "progress";
@@ -2755,6 +2849,104 @@ com_ragestudio_utils_system_DeviceCapabilities.texturesRatios = (function($this)
 com_ragestudio_utils_system_DeviceCapabilities.textureRatio = 1;
 com_ragestudio_utils_system_DeviceCapabilities.textureType = "";
 com_ragestudio_utils_system_DeviceCapabilities.screenRatio = 1;
+com_ragestudio_utils_ui_Keyboard.A = 65;
+com_ragestudio_utils_ui_Keyboard.B = 66;
+com_ragestudio_utils_ui_Keyboard.C = 67;
+com_ragestudio_utils_ui_Keyboard.D = 68;
+com_ragestudio_utils_ui_Keyboard.E = 69;
+com_ragestudio_utils_ui_Keyboard.F = 70;
+com_ragestudio_utils_ui_Keyboard.G = 71;
+com_ragestudio_utils_ui_Keyboard.H = 72;
+com_ragestudio_utils_ui_Keyboard.I = 73;
+com_ragestudio_utils_ui_Keyboard.J = 74;
+com_ragestudio_utils_ui_Keyboard.K = 75;
+com_ragestudio_utils_ui_Keyboard.L = 76;
+com_ragestudio_utils_ui_Keyboard.M = 77;
+com_ragestudio_utils_ui_Keyboard.N = 78;
+com_ragestudio_utils_ui_Keyboard.O = 79;
+com_ragestudio_utils_ui_Keyboard.P = 80;
+com_ragestudio_utils_ui_Keyboard.Q = 81;
+com_ragestudio_utils_ui_Keyboard.R = 82;
+com_ragestudio_utils_ui_Keyboard.S = 83;
+com_ragestudio_utils_ui_Keyboard.T = 84;
+com_ragestudio_utils_ui_Keyboard.U = 85;
+com_ragestudio_utils_ui_Keyboard.V = 86;
+com_ragestudio_utils_ui_Keyboard.W = 87;
+com_ragestudio_utils_ui_Keyboard.X = 88;
+com_ragestudio_utils_ui_Keyboard.Y = 89;
+com_ragestudio_utils_ui_Keyboard.Z = 90;
+com_ragestudio_utils_ui_Keyboard.NUMBER_0 = 48;
+com_ragestudio_utils_ui_Keyboard.NUMBER_1 = 49;
+com_ragestudio_utils_ui_Keyboard.NUMBER_2 = 50;
+com_ragestudio_utils_ui_Keyboard.NUMBER_3 = 51;
+com_ragestudio_utils_ui_Keyboard.NUMBER_4 = 52;
+com_ragestudio_utils_ui_Keyboard.NUMBER_5 = 53;
+com_ragestudio_utils_ui_Keyboard.NUMBER_6 = 54;
+com_ragestudio_utils_ui_Keyboard.NUMBER_7 = 55;
+com_ragestudio_utils_ui_Keyboard.NUMBER_8 = 56;
+com_ragestudio_utils_ui_Keyboard.NUMBER_9 = 57;
+com_ragestudio_utils_ui_Keyboard.NUMPAD_0 = 96;
+com_ragestudio_utils_ui_Keyboard.NUMPAD_1 = 97;
+com_ragestudio_utils_ui_Keyboard.NUMPAD_2 = 98;
+com_ragestudio_utils_ui_Keyboard.NUMPAD_3 = 99;
+com_ragestudio_utils_ui_Keyboard.NUMPAD_4 = 100;
+com_ragestudio_utils_ui_Keyboard.NUMPAD_5 = 101;
+com_ragestudio_utils_ui_Keyboard.NUMPAD_6 = 102;
+com_ragestudio_utils_ui_Keyboard.NUMPAD_7 = 103;
+com_ragestudio_utils_ui_Keyboard.NUMPAD_8 = 104;
+com_ragestudio_utils_ui_Keyboard.NUMPAD_9 = 105;
+com_ragestudio_utils_ui_Keyboard.NUMPAD_ADD = 107;
+com_ragestudio_utils_ui_Keyboard.NUMPAD_DECIMAL = 110;
+com_ragestudio_utils_ui_Keyboard.NUMPAD_DIVIDE = 111;
+com_ragestudio_utils_ui_Keyboard.NUMPAD_ENTER = 108;
+com_ragestudio_utils_ui_Keyboard.NUMPAD_MULTIPLY = 106;
+com_ragestudio_utils_ui_Keyboard.NUMPAD_SUBTRACT = 109;
+com_ragestudio_utils_ui_Keyboard.F1 = 112;
+com_ragestudio_utils_ui_Keyboard.F2 = 113;
+com_ragestudio_utils_ui_Keyboard.F3 = 114;
+com_ragestudio_utils_ui_Keyboard.F4 = 115;
+com_ragestudio_utils_ui_Keyboard.F5 = 116;
+com_ragestudio_utils_ui_Keyboard.F6 = 117;
+com_ragestudio_utils_ui_Keyboard.F7 = 118;
+com_ragestudio_utils_ui_Keyboard.F8 = 119;
+com_ragestudio_utils_ui_Keyboard.F9 = 120;
+com_ragestudio_utils_ui_Keyboard.F10 = 121;
+com_ragestudio_utils_ui_Keyboard.F11 = 122;
+com_ragestudio_utils_ui_Keyboard.F12 = 123;
+com_ragestudio_utils_ui_Keyboard.F13 = 124;
+com_ragestudio_utils_ui_Keyboard.F14 = 125;
+com_ragestudio_utils_ui_Keyboard.F15 = 126;
+com_ragestudio_utils_ui_Keyboard.LEFT = 37;
+com_ragestudio_utils_ui_Keyboard.UP = 38;
+com_ragestudio_utils_ui_Keyboard.RIGHT = 39;
+com_ragestudio_utils_ui_Keyboard.DOWN = 40;
+com_ragestudio_utils_ui_Keyboard.BACKSLASH = 220;
+com_ragestudio_utils_ui_Keyboard.BACKSPACE = 8;
+com_ragestudio_utils_ui_Keyboard.CAPS_LOCK = 20;
+com_ragestudio_utils_ui_Keyboard.COMMA = 188;
+com_ragestudio_utils_ui_Keyboard.COMMAND = 15;
+com_ragestudio_utils_ui_Keyboard.CONTROL = 17;
+com_ragestudio_utils_ui_Keyboard.DELETE = 46;
+com_ragestudio_utils_ui_Keyboard.END = 35;
+com_ragestudio_utils_ui_Keyboard.ENTER = 13;
+com_ragestudio_utils_ui_Keyboard.EQUAL = 187;
+com_ragestudio_utils_ui_Keyboard.ESCAPE = 27;
+com_ragestudio_utils_ui_Keyboard.HOME = 36;
+com_ragestudio_utils_ui_Keyboard.INSERT = 45;
+com_ragestudio_utils_ui_Keyboard.LEFTBRACKET = 219;
+com_ragestudio_utils_ui_Keyboard.MINUS = 189;
+com_ragestudio_utils_ui_Keyboard.PAGE_DOWN = 34;
+com_ragestudio_utils_ui_Keyboard.PAGE_UP = 33;
+com_ragestudio_utils_ui_Keyboard.PERIOD = 190;
+com_ragestudio_utils_ui_Keyboard.QUOTE = 222;
+com_ragestudio_utils_ui_Keyboard.RIGHTBRACKET = 221;
+com_ragestudio_utils_ui_Keyboard.SEMICOLON = 186;
+com_ragestudio_utils_ui_Keyboard.SHIFT = 16;
+com_ragestudio_utils_ui_Keyboard.SLASH = 191;
+com_ragestudio_utils_ui_Keyboard.SPACE = 32;
+com_ragestudio_utils_ui_Keyboard.TAB = 9;
+com_ragestudio_utils_ui_Keyboard.MENU = 16777234;
+com_ragestudio_utils_ui_Keyboard.SEARCH = 16777247;
 com_ragestudio_utils_ui_UIPosition.LEFT = "left";
 com_ragestudio_utils_ui_UIPosition.RIGHT = "right";
 com_ragestudio_utils_ui_UIPosition.TOP = "top";
@@ -2780,3 +2972,5 @@ haxe_xml_Parser.escapes = (function($this) {
 js_Boot.__toStr = {}.toString;
 com_ragestudio_Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}}, typeof window != "undefined" ? window : exports, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);
+
+//# sourceMappingURL=NextDays.js.map
