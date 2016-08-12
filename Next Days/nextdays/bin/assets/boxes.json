@@ -1,0 +1,36 @@
+{
+	"Player_box": {
+		"mcBottom": {
+			"x": 0.3,
+			"type": "Point",
+			"y": 27.55
+		},
+		"mcLeft": {
+			"x": -44.15,
+			"type": "Point",
+			"y": -0.95
+		},
+		"mcTop": {
+			"x": 0.3,
+			"type": "Point",
+			"y": -29.45
+		},
+		"mcGlobalBox": {
+			"height": 37,
+			"x": -34.15,
+			"width": 68.9,
+			"type": "Rectangle",
+			"y": -19.45
+		},
+		"mcCenter": {
+			"x": 0.3,
+			"type": "Point",
+			"y": -0.95
+		},
+		"mcRight": {
+			"x": 44.75,
+			"type": "Point",
+			"y": -0.95
+		}
+	}
+}
